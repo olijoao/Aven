@@ -11,10 +11,18 @@ namespace aven {
 
 	inline bool display_imgui(std::string const& displayName, vec3& value) {
 		return ImGui::DragFloat3(displayName.c_str(), &value[0]);
+	}	
+	
+	inline bool display_imgui(std::string const& displayName, ivec3& value) {
+		return ImGui::DragInt3(displayName.c_str(), &value[0]);
 	}
 
 	inline bool display_imgui(std::string const& displayName, float& value) {
 		return ImGui::DragFloat(displayName.c_str(), &value);
+	}		
+	
+	inline bool display_imgui(std::string const& displayName, int& value) {
+		return ImGui::DragInt(displayName.c_str(), &value);
 	}	
 	
 	inline bool display_imgui(std::string const& displayName, bool& value) {

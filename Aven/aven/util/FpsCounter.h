@@ -9,7 +9,7 @@ public:
 
 	int tick() {
 		auto now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-		int deltaTime = now - lastTime;
+		auto deltaTime = now - lastTime;
 		lastIntervals.push_back(deltaTime);
 		if (lastIntervals.size() > nbrFrames)
 			lastIntervals.pop_front();
@@ -24,9 +24,7 @@ public:
 	}
 
 
-
-
 private:
 	std::list<int> lastIntervals;
-	__int64 lastTime;
+	__int64 lastTime{ std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() };
 };

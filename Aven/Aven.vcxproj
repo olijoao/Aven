@@ -227,13 +227,18 @@
     <ClInclude Include="aven\volumeOperations\Tool_Eraser.h" />
     <ClInclude Include="aven\volumeOperations\Tool_Paint.h" />
     <ClInclude Include="aven\volumeOperations\ToolManager.h" />
+    <ClInclude Include="shader\filter\adjustRGB.glsl" />
     <ClInclude Include="shader\lib\filter_main.glsl" />
     <ClInclude Include="shader\_experimental\NodePool.glsl" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="shader\filter\brightness_contrast.glsl" />
     <None Include="shader\filter\clear.glsl" />
+    <None Include="shader\filter\adjustHSV.glsl" />
     <None Include="shader\filter\point_invertRGB.glsl" />
     <None Include="shader\filter\point_fillColor.glsl" />
+    <None Include="shader\filter\renderRandom.glsl" />
+    <None Include="shader\filter\transform.glsl" />
     <None Include="shader\lib\blend.glsl" />
     <None Include="shader\lib\camera.glsl" />
     <None Include="shader\lib\geometry.glsl" />

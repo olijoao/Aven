@@ -4,9 +4,9 @@
 
 namespace aven {
 
-	Project::Project(clamped<ivec3, 1, 256> size)
+	Project::Project(clamped<ivec3, 1, 256> const size)
 		:history(Scene(size)), 
-		renderer(std::max(size.getValue().x, std::max(size.getValue().y, size.getValue().z)/2 + 100))
+		renderer(std::max(size.getValue().x, std::max(size.getValue().y,size.getValue().z)/2 + 100))
 	{
 		history.commit();
 	}

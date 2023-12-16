@@ -37,7 +37,7 @@ namespace aven {
 		}
 
 
-		int getUndoCount()	{ return history.size()-2;		}
+		size_t getUndoCount()	{ return history.size()-2;		}
 		bool undoable()		{ return history.size() > 2;	}
 		bool redoable()		{ return future.size() > 0;		}
 

@@ -353,7 +353,7 @@ namespace aven{
 		auto& renderer = aven::getProject().getRenderer();
 		renderer.render();
 		auto& texture = renderer.getTexture();
-		ImGui::Image(ImTextureID(texture.getTextureName()), ImVec2(static_cast<float>(texture.getWidth()), static_cast<float>(texture.getHeight())));
+		ImGui::Image(ImTextureID(ImTextureID(texture.getTextureName())), ImVec2(texture.getWidth(), texture.getHeight()));
 
 
 		ImGui::End();
@@ -551,6 +551,14 @@ namespace aven{
 			ImGui::End();
 			return;
 		}
+
+		// color
+		ImGui::SetNextItemWidth(30);
+		auto color = aven::getForegroundColor();
+		if (ImGui::ColorEdit3("##Color", &color[0], ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel))
+			aven::setForegroundColor(color);
+
+
 
 		auto& tools				= aven::toolManager::getTools();
 		int selectedTool_index	= aven::toolManager::getSelectedIndex();

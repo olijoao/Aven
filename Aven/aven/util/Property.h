@@ -11,12 +11,11 @@ namespace aven {
 	class Property {
 	public:
 		template <typename T>
-		Property(std::string displayName, std::string internalName, T x):
-			self(std::make_unique<model_t<T>>(displayName, internalName, std::move(x))) 
+		Property(std::string displayName, std::string internalName, T x)
+			:self(std::make_unique<model_t<T>>(displayName, internalName, std::move(x))) 
 		{
 			//..
 		}
-
 
 		void updateUniform(gl::Program const& program) const{
 			self->updateUniform(program);
@@ -37,7 +36,6 @@ namespace aven {
 
 			virtual void updateUniform(gl::Program const&) const = 0;
 			virtual bool display_imgui() = 0;
-
 			std::string const internalName;
 			std::string const displayName;
 		};

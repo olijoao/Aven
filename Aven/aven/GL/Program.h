@@ -1,6 +1,7 @@
 #pragma once
 
 #include <aven/GL/Shader.h>
+#include <aven/util/clamped.h>
 #include <memory>
 #include <unordered_map>
 #include <vector>
@@ -39,6 +40,12 @@ namespace gl{
 		void setVec4	(std::string const&	name,	vec4 v)												const;
 		void setMat4x4	(std::string const& name,	mat4 const & mat)									const;
 	
+
+		template <typename T, T MIN, T MAX>
+		void setUniform(std::string const& name, clamped <T, MIN, MAX> value) const {
+			setUniform(name, value.getValue());
+		}
+
 		void setUniform(std::string const& name, int value)											const;
 		void setUniform(std::string const& name, int x, int y)										const;
 		void setUniform(std::string const& name, int x, int y, int z)								const;

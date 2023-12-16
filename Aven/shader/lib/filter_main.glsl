@@ -22,7 +22,8 @@ void main() {
 }
 
 
-// FILTER_COLOR_APLHA: vec4 -> vec4
+
+// FILTER_COLOR_ALPHA: vec4 -> vec4
 #elif defined(FILTER_COLOR_ALPHA)			
 vec4 filter_color_alpha(in vec4 color);	//forward declaration
 
@@ -47,6 +48,19 @@ void main() {
 	if (any(greaterThanEqual(posVoxel, volume_dst_size)))
 		return;
 	imageStore(volume_dst, posVoxel, filter_render(posVoxel));
+}
+
+//FILTER_DEFORM: pos(vec3) -> pos(vec3)
+#elif defined(FILTER_DEFORM)	
+ivec3 filter_deform(in ivec3 pos);			//forward declaration
+
+layout(local_size_x = 8, local_size_y = 8, local_size_z = 8) in;
+void main() {
+	ivec3 posVoxel = ivec3(gl_GlobalInvocationID);
+	if (any(greaterThanEqual(posVoxel, volume_dst_size)))
+		return;
+	vec4 voxel = imageLoad(volume_src, filter_deform(posVoxel));
+	imageStore(volume_dst, posVoxel, voxel);
 }
 
 

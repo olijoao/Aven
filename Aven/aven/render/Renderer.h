@@ -4,6 +4,8 @@
 #include <aven/GL/ShaderLoader.h>
 #include <aven/GL/VAO.h>
 #include <aven/render/ViewPortCamera.h>
+
+
 namespace aven {
 	class Renderer {
 	public:
@@ -29,7 +31,7 @@ namespace aven {
 		gl::Program				program_tonemap;
 		gl::Vao					vao;
 
-		unsigned int renderIteration = 0;
+		int renderIteration = 0;
 
 		void updateUniforms();
 	};

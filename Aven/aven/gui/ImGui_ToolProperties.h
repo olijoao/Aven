@@ -35,14 +35,6 @@ namespace aven {
 
 		ImGui::PopItemWidth();
 
-		// color
-		ImGui::SameLine();
-		auto color = aven::getForegroundColor();
-		ImGui::Text("color");
-		ImGui::SameLine();
-		if (ImGui::ColorEdit3("##Color", &color[0], ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel))
-			aven::setForegroundColor(color);
-
 		// menu
 		ImGui::SameLine();
 

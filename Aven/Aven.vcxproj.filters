@@ -260,6 +260,9 @@
     <ClInclude Include="aven\util\math.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="shader\filter\adjustRGB.glsl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader\___todoOld\__temp\filter.glsl" />
@@ -290,6 +293,10 @@
     <None Include="shader\lib\math.glsl" />
     <None Include="shader\lib\camera.glsl" />
     <None Include="shader\lib\shade.glsl" />
+    <None Include="shader\filter\transform.glsl" />
+    <None Include="shader\filter\adjustHSV.glsl" />
+    <None Include="shader\filter\brightness_contrast.glsl" />
+    <None Include="shader\filter\renderRandom.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="3rdParty\libs\glfw3.lib" />

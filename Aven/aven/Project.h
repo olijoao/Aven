@@ -11,7 +11,7 @@ namespace aven {
 
 	class Project {
 	public:
-		Project(clamped<ivec3, 1, 256> size);
+		Project(clamped<ivec3, 1, 256> const size);
 
 		Renderer&		getRenderer();
 		History<Scene>& getHistory();
