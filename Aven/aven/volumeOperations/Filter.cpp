@@ -1,7 +1,7 @@
 
 #include <aven/GL/ShaderLoader.h>
 #include <aven/volumeOperations/Filter.h>
-
+#include <aven/objects/BrickPool.h>
 
 
 namespace aven {
@@ -14,27 +14,24 @@ namespace aven {
 		//...
 	}
 
+	VolumeData Filter::operator()(VolumeData const& src) const{
+		auto size	= src.getSize();
+		auto dst	= VolumeData(size);
 
-	std::shared_ptr<Volume const> Filter::operator()(std::shared_ptr<Volume const> src) const{
-		assert(src);
-
-		auto size		= src->getSize();
-		auto texture	= gl::Texture3D_rgba8u(size);
-
-		src->getTexture().bindToImageTextureUnit_readOnly(0);
-		texture.bindToImageTextureUnit_writeOnly(1);
-			
-		program.setInt3("volume_dst_size", size);
-
+		program.setInt3("volume_size", size);
+		brickPool::bindSSBO_toBufferBase0();
+		src.getSSBO().bindBufferBase(1);
+		dst.getSSBO().bindBufferBase(2);
+	
 		for (Property const& p : properties)
 			p.updateUniform(program);
 
 		ivec3 nbrGroups = (size + ivec3(7, 7, 7)) / ivec3(8, 8, 8);
-		gl::dispatch(program, nbrGroups.x, nbrGroups.y, nbrGroups.z);
+		program.setInt3("nbrGroups", nbrGroups);
 
-		auto newVolume = std::make_shared<Volume>(*src.get());
-		newVolume->setTexture(std::move(texture));
-		return newVolume;
+		glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+		gl::dispatch(program, 1, 1, 1);	
+		return dst;
 	}
 
 

@@ -50,7 +50,7 @@ namespace aven {
 			{
 				std::vector<Property> props;
 				props.push_back({ "offset", "offset", ivec3(0,0,0) });
-				filters.push_back({ "adjust hsv",	"shader/filter/adjustRGB.glsl", std::move(props) });
+				filters.push_back({ "adjust rgb",	"shader/filter/adjustRGB.glsl", std::move(props) });
 			}
 
 		}

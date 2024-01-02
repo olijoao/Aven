@@ -166,8 +166,10 @@
     <ClCompile Include="aven\Project.cpp" />
     <ClCompile Include="aven\render\Renderer.cpp" />
     <ClCompile Include="aven\render\ViewPortCamera.cpp" />
-    <ClCompile Include="aven\scene\Scene.cpp" />
-    <ClCompile Include="aven\scene\Volume.cpp" />
+    <ClCompile Include="aven\objects\BrickPool.cpp" />
+    <ClCompile Include="aven\objects\VolumeData.cpp" />
+    <ClCompile Include="aven\objects\Scene.cpp" />
+    <ClCompile Include="aven\objects\Volume.cpp" />
     <ClCompile Include="aven\volumeOperations\OperationTool.cpp" />
     <ClCompile Include="aven\volumeOperations\Tool.cpp" />
     <ClCompile Include="aven\volumeOperations\Tool_Eraser.cpp" />
@@ -194,6 +196,8 @@
     <ClInclude Include="3rdParty\imgui\imstb_textedit.h" />
     <ClInclude Include="3rdParty\imgui\imstb_truetype.h" />
     <ClInclude Include="aven\Aven.h" />
+    <ClInclude Include="aven\objects\BrickPool.h" />
+    <ClInclude Include="aven\objects\VolumeData.h" />
     <ClInclude Include="aven\util\clamped.h" />
     <ClInclude Include="aven\util\geo3d.h" />
     <ClInclude Include="aven\GL\Framebuffer.h" />
@@ -214,8 +218,8 @@
     <ClInclude Include="aven\render\ViewPortCamera.h" />
     <ClInclude Include="aven\gui\Gui.h" />
     <ClInclude Include="aven\render\Renderer.h" />
-    <ClInclude Include="aven\scene\Scene.h" />
-    <ClInclude Include="aven\scene\Volume.h" />
+    <ClInclude Include="aven\objects\Scene.h" />
+    <ClInclude Include="aven\objects\Volume.h" />
     <ClInclude Include="aven\volumeOperations\ToolBrushProperties.h" />
     <ClInclude Include="aven\volumeOperations\OperationTool.h" />
     <ClInclude Include="aven\_experimental\BlockAllocator.h" />
@@ -232,6 +236,9 @@
     <ClInclude Include="shader\_experimental\NodePool.glsl" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="shader\brickPool\BrickPool.glsl" />
+    <None Include="shader\brickPool\BrickPool_ctor.glsl" />
+    <None Include="shader\brickPool\Volume_dtor.glsl" />
     <None Include="shader\filter\brightness_contrast.glsl" />
     <None Include="shader\filter\clear.glsl" />
     <None Include="shader\filter\adjustHSV.glsl" />
@@ -245,12 +252,12 @@
     <None Include="shader\lib\math.glsl" />
     <None Include="shader\lib\sample.glsl" />
     <None Include="shader\lib\shade.glsl" />
+    <None Include="shader\lib\volume.glsl" />
     <None Include="shader\_experimental\NodePool_ctor.glsl" />
     <None Include="shader\_experimental\NodePool_transphere.glsl" />
     <None Include="shader\render\tonemap_frag.glsl" />
     <None Include="shader\render\tonemap_vert.glsl" />
     <None Include="shader\volumeOps\blendVolumes.glsl" />
-    <None Include="shader\volumeOps\paintMask.glsl" />
     <None Include="shader\volumeOps\paintShape.glsl" />
     <None Include="shader\volumeOps\raycast.glsl" />
     <None Include="shader\___todoOld\filter\TestFilter.glsl" />

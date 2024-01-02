@@ -61,6 +61,11 @@ namespace aven {
 			setSubData(data, 0, size_bytes);
 		}
 
+
+		GLuint SSBO::getName() {
+			return name;
+		}
+
 		void SSBO::getData(void* dataOut) const {
 			return getDataRange(dataOut, 0, size_bytes);
 		}

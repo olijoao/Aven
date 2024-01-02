@@ -7,6 +7,7 @@
 #include <3rdParty/imgui/imgui_impl_opengl3.h>
 #include <aven/Aven.h>
 #include <aven/gui/GUI.h>
+#include <aven/objects/BrickPool.h>
 #include <aven/util/FpsCounter.h>
 #include <aven/volumeOperations/FilterManager.h>
 #include <aven/volumeOperations/ToolManager.h>
@@ -213,7 +214,6 @@ namespace aven{
 		displayPopup_NewProject();
 		displayDevWindow();
 
-		// todo fix me
 		// displayScene() and displayToolsProperties() needs to be called before displayCanvas()
 		// after changing a value in displayScene. 
 		// Starting drawing while the inputfield is still active leads to:
@@ -699,36 +699,47 @@ namespace aven{
 			+ " (" + std::to_string(passedTime) + " ms" + ")").c_str());
 		
 
-		//stats table
-		static std::vector<std::pair<std::string, std::function<std::string()>>> tableEntries
-			= { {"State",				[]() {	auto op = aven::getProject().getCurrentOperation();
-												switch(op){
+		struct StatEntry {
+			std::string name;
+			std::string cache = "";
+			std::function<std::string()> f;
+		};
+
+
+		static std::vector<StatEntry> stats
+			= { {.name="State", .f=[]() {	auto op = aven::getProject().getCurrentOperation();
+												switch (op) {
 												case Project::Operation::Tool:		return "tool";
 												case Project::Operation::Filter:	return "filter";
 												case Project::Operation::ValueEdit:	return "valueEdit";
 												default: assert(false);	// falls through
 												case Project::Operation::None:		return "default";
 												}}},
-				{"History: nbr undos",	[]() {	return std::to_string(aven::getProject().getHistory().getUndoCount()); }},
-			
+				{.name = "History: nbr undos",		.f = []() {	return std::to_string(aven::getProject().getHistory().getUndoCount()); }},
+				{.name="BrickPool: nrbFreeBricks",	.f= []() {	return std::to_string(brickPool::nbrFreeBricks()); }},
+				{.name = "BrickPool: capacity",		.f = []() {	return std::to_string(brickPool::CAPACITY); }},
 		};
 
+
+		if (ImGui::Button("Refresh")) 
+			for (auto& entry : stats) 
+				entry.cache = entry.f();
+			
+		
+		
 		ImGui::Columns(2, "Columns_Stats"); // 4-ways, with border
 		ImGui::Separator();
 		ImGui::Text("name"); ImGui::NextColumn();
 		ImGui::Text("value"); ImGui::NextColumn();
 		ImGui::Separator();
 		
-		for (auto entry : tableEntries) {
-			ImGui::Text(entry.first.c_str());		ImGui::NextColumn();
-			ImGui::Text(entry.second().c_str());	ImGui::NextColumn();
+		for (auto entry : stats) {
+			ImGui::Text(entry.name.c_str());		ImGui::NextColumn();
+			ImGui::Text(entry.cache.c_str());	ImGui::NextColumn();
 			ImGui::Separator();
 		}
 
 		ImGui::Columns(1);
-
-		
-
 
 		ImGui::End();
 	}

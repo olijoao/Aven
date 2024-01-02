@@ -1,6 +1,7 @@
 
 #include <aven/Aven.h>
 #include <aven/gui/Gui.h>
+#include <aven/objects/BrickPool.h>
 #include <aven/volumeOperations/VolumeOps.h>
 #include <aven/volumeOperations/FilterManager.h>
 #include <aven/volumeOperations/OperationTool.h>
@@ -15,9 +16,9 @@ namespace aven{
 }
 
 
-
 namespace aven {
 	void init() {
+		brickPool::init();
 		volumeOps::init();
 		filterManager::init();
 		toolManager::init();
@@ -30,6 +31,7 @@ namespace aven {
 		toolManager::destroy();
 		filterManager::destroy();
 		volumeOps::destroy();
+		brickPool::destroy();
 	}
 
 

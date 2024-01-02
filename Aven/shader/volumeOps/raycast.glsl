@@ -1,8 +1,8 @@
 
 #version 460 core
 
-readonly uniform layout(rgba8, binding = 0) image3D volume;
-uniform ivec3	volume_size;
+#pragma include "shader/lib/volume.glsl"
+
 uniform vec3	ray_pos;
 uniform vec3	ray_dir;
 
@@ -63,7 +63,7 @@ void main() {
 			}
 		}
 
-		vec4 voxel = imageLoad(volume, ivec3(pos));
+		vec4 voxel = getVolume_src(ivec3(pos));
 		if (voxel.a > 0)
 			break;
 	}

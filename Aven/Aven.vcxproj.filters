@@ -27,10 +27,10 @@
     <ClCompile Include="aven\Aven.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="aven\scene\Scene.cpp">
+    <ClCompile Include="aven\objects\Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="aven\scene\Volume.cpp">
+    <ClCompile Include="aven\objects\Volume.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="aven\volumeOperations\FilterManager.cpp">
@@ -114,6 +114,12 @@
     <ClCompile Include="aven\GL\FrameBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="aven\objects\BrickPool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="aven\objects\VolumeData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="aven\gui\Gui.h">
@@ -128,10 +134,10 @@
     <ClInclude Include="aven\Aven.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="aven\scene\Scene.h">
+    <ClInclude Include="aven\objects\Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="aven\scene\Volume.h">
+    <ClInclude Include="aven\objects\Volume.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="aven\volumeOperations\FilterManager.h">
@@ -263,6 +269,12 @@
     <ClInclude Include="shader\filter\adjustRGB.glsl">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="aven\objects\BrickPool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="aven\objects\VolumeData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader\___todoOld\__temp\filter.glsl" />
@@ -284,7 +296,6 @@
     <None Include="shader\lib\blend.glsl" />
     <None Include="shader\volumeOps\raycast.glsl" />
     <None Include="shader\volumeOps\blendVolumes.glsl" />
-    <None Include="shader\volumeOps\paintMask.glsl" />
     <None Include="shader\volumeOps\paintShape.glsl" />
     <None Include="shader\_experimental\NodePool_ctor.glsl" />
     <None Include="shader\_experimental\NodePool_transphere.glsl" />
@@ -297,6 +308,10 @@
     <None Include="shader\filter\adjustHSV.glsl" />
     <None Include="shader\filter\brightness_contrast.glsl" />
     <None Include="shader\filter\renderRandom.glsl" />
+    <None Include="shader\brickPool\BrickPool.glsl" />
+    <None Include="shader\brickPool\BrickPool_ctor.glsl" />
+    <None Include="shader\lib\volume.glsl" />
+    <None Include="shader\brickPool\Volume_dtor.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="3rdParty\libs\glfw3.lib" />

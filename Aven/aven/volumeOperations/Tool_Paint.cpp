@@ -4,6 +4,7 @@
 #include <aven/volumeOperations/Tool_Paint.h>
 #include <aven/volumeOperations/VolumeOps.h>
 
+
 namespace aven {
 	
 	Tool_Paint::Tool_Paint()
@@ -16,7 +17,7 @@ namespace aven {
 	void Tool_Paint::start(Scene& scene, MouseInput const& mouseInput) {
 		assert(aven::getProject().getCurrentToolOperation() == nullptr);
 		auto& op = aven::getProject().getCurrentToolOperation();
-		op = std::make_unique<OperationTool>(this, scene.volume->getSize(), aven::getForegroundColor(), properties.opacity, BlendMode::Normal);
+		op = std::make_unique<OperationTool>(this, scene.volume->getSize(), properties.opacity, BlendMode::Normal);
 		apply(scene, mouseInput);
 	}
 
@@ -26,16 +27,22 @@ namespace aven {
 		auto& op = aven::getProject().getCurrentToolOperation();
 		assert(op != nullptr);		
 		assert(op->tool == this);				
-
+		
 		auto& volume	= scene.volume;
-		auto blended = volumeOps::paint_mask(	volume->getTexture(), 
-												op->texture_mask, 
-												aven::getForegroundColor(),
-												static_cast<float>(op->opacity.getValue()) / 255.0f);
+		auto result		= volumeOps::blend(	volume->getVolumeData(), 
+											std::move(op->volumeData), 
+											volumeOps::BlendMode::Normal,
+											static_cast<float>(op->opacity.getValue()) / 255.0f);
+		
+		scene.volume = std::make_shared<Volume>(
+				volume->getVolumeData().getSize(),
+				volume->pos,
+				volume->sigma_t,
+				volume->density,
+				volume->stepSize,
+				std::make_shared<VolumeData>(std::move(result))
+			);
 
-		Volume newVolume = *volume.get();
-		newVolume.setTexture(std::move(blended));
-		scene.volume = std::make_shared<Volume>(newVolume);
 		op = nullptr;
 		assert(aven::getProject().getCurrentToolOperation() == nullptr);
 	}
@@ -44,24 +51,22 @@ namespace aven {
 
 	void Tool_Paint::apply(Scene& scene, MouseInput const& mouseInput) {
 		assert(aven::getProject().getCurrentToolOperation() != nullptr);
-
+		
 		auto& op = aven::getProject().getCurrentToolOperation();
-		assert(op);
-		assert(op->tool == this);
-
+		assert(op && op->tool == this);
+		
 		auto& volume = scene.volume;
-
+		
 		auto intersection = intersect(mouseInput.ray, volume->getBoundingBox());
 		if (!intersection)
 			return;
 		vec3 intersection_pos = mouseInput.ray.pos + mouseInput.ray.dir * intersection.value().x - volume->pos;
 		intersection_pos = intersection_pos + vec3(volume->getSize())/2;
 		Ray ray = Ray(intersection_pos, mouseInput.ray.dir);
+		ivec3 pos = volumeOps::raycast(volume->getVolumeData(), ray);
 
-
-		ivec3 pos			= volumeOps::raycast(volume->getTexture(), ray);
 		float spacing_absolute = static_cast<float>(properties.radius.getValue()) * 2.0f * properties.spacing.getValue();
-	
+		
 		ivec3 from, to;
 		int nbrIterations;
 		if (op->brushStroke_lastPos.has_value()) {
@@ -78,10 +83,8 @@ namespace aven {
 			op->brushStroke_distanceRemaining = 0;
 		}
 		op->brushStroke_lastPos = to;
-	
-
-		volumeOps::paintStroke_Mirror(op->texture_mask, from, to, nbrIterations, properties.radius.getValue(), properties.brush, properties.flow.getValue(), properties.mirrored);
-
+		
+		volumeOps::paintStroke_Mirror(op->volumeData, from, to, nbrIterations, properties.radius.getValue(), properties.brush, vec4(aven::getForegroundColor(), properties.flow.getValue()), properties.mirrored);
 	}
 
 

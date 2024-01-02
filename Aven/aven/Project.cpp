@@ -121,9 +121,20 @@ namespace aven {
 	void Project::executeFilterOperation() {
 		assert(op_filter && operation == Operation::Filter);
 		history.cancelCurrent();
-		getScene().volume = op_filter->operator()(getScene().volume);
+
+		auto data = op_filter->operator()(getScene().volume->getVolumeData());
+		auto sptr_volume = getScene().volume;
+		getScene().volume = std::make_shared<Volume>(
+			sptr_volume->getVolumeData().getSize(),
+			sptr_volume->pos,
+			sptr_volume->sigma_t,
+			sptr_volume->density,
+			sptr_volume->stepSize,
+			std::make_shared<VolumeData>(std::move(data))
+		);
+
 		renderer.resetIterations();
-	}
+	} 
 
 
 

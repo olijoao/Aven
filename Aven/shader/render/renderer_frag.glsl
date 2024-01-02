@@ -6,12 +6,11 @@
 #pragma include "shader/lib/math.glsl"
 #pragma include "shader/lib/sample.glsl"
 #pragma include "shader/lib/shade.glsl"
-
+#pragma include "shader/lib/volume.glsl"
 
 const int VOLUME_TYPE_DEFAULT           = 0;
 const int VOLUME_TYPE_BLENDED_NORMAL    = 1;
 const int VOLUME_TYPE_BLENDED_ERASE     = 2;
-
 
 in vec2 pos_Pixel;
 out vec4 FragColor;
@@ -28,34 +27,33 @@ uniform vec3        volume_pos;
 uniform float       volume_sigma_t;
 uniform float       volume_density;
 uniform float       volume_opacity;     //used with VOLUME_TYPE_BLENDED
-uniform vec3        volume_color;       //used with VOLUME_TYPE_BLENDED
 uniform int         volune_isDisplayingBoundingBox;
 uniform int         volume_renderModeHybrid;
 uniform float       volume_stepSize;
-uniform ivec3       volumeSize;
 uniform vec3        invVolumeSize;
-layout(binding = 1) uniform sampler3D   volume;
-layout(binding = 2) uniform sampler3D   volume_bottom;
 
 
 
 vec4 getVoxelAt(vec3 pos) {
+    ivec3 ipos = ivec3(pos * vec3(getVolumeSize()));
+
     switch (volume_type) {
-    case VOLUME_TYPE_DEFAULT: {
-        return texture(volume, pos);
-    }
-    case VOLUME_TYPE_BLENDED_NORMAL:{
-        vec4 top    = vec4(volume_color, texture(volume, pos).r);
-        vec4 bottom = texture(volume_bottom, pos);
-        top.a       *= volume_opacity;
-        return blend_over(top, bottom);
-    }
-    case VOLUME_TYPE_BLENDED_ERASE: {
-        float top       = texture(volume, pos).r;
-        vec4 bottom     = texture(volume_bottom, pos);
-        bottom.a        = bottom.a - volume_opacity * top;
-        return bottom;
-    }
+        case VOLUME_TYPE_DEFAULT: {
+            return getVolume_src(ipos);
+        }
+        case VOLUME_TYPE_BLENDED_NORMAL:{
+
+            vec4 top    = getVolume_dst(ipos);
+            vec4 bottom = getVolume_src(ipos);  
+            top.a       *= volume_opacity;
+            return blend_over(top, bottom);
+        }
+        case VOLUME_TYPE_BLENDED_ERASE: {
+            vec4 top        = getVolume_dst(ipos);
+            vec4 bottom     = getVolume_src(ipos);
+            bottom.a        = bottom.a - volume_opacity * top.a;
+            return bottom;
+        }
     }
     return vec4(1, 0, 1, 1);
 }
@@ -78,8 +76,8 @@ vec3 getGradientAt(vec3 p) {
 }
 
 
-vec3 worldToVolume(vec3 posWorld, vec3 posVolume, ivec3 volumeSize, vec3 scale) {
-    return (posWorld-posVolume) / (volumeSize*scale) + vec3(0.5f, 0.5f, 0.5f);
+vec3 worldToVolume(vec3 posWorld, vec3 posVolume, vec3 scale) {
+    return (posWorld-posVolume) / (getVolumeSize() * scale) + vec3(0.5f, 0.5f, 0.5f);
 }
 
 
@@ -93,7 +91,7 @@ Hit intersectWorld(Ray ray, int iteration) {
 
     //AABB
     vec3 scale = vec3(1.0f);
-    vec3 aabbSize = vec3(volumeSize) * scale;
+    vec3 aabbSize = vec3(getVolumeSize()) * scale;
     AABB aabb = AABB(volume_pos - aabbSize / 2, volume_pos + aabbSize / 2);
     vec2 t_aabb;
     if (intersect(ray, aabb, t_aabb) && t_aabb.x < nearestHit.t) {
@@ -140,7 +138,7 @@ Hit intersectWorld(Ray ray, int iteration) {
                 break;
 
             vec3 samplePos = ray.origin + ray.dir * t;
-            vec3 posLocal = worldToVolume(samplePos, volume_pos, volumeSize, scale);
+            vec3 posLocal = worldToVolume(samplePos, volume_pos, scale);
             vec3 jitter = vec3(rand(), rand(), rand()) - 0.5f;
 
             posLocal += invVolumeSize * jitter;    //done here since used in getVoxelAt() and getGradientAt()

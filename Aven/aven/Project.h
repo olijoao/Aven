@@ -1,7 +1,7 @@
 #pragma once
 
+#include <aven/objects/Scene.h>
 #include <aven/render/Renderer.h>
-#include <aven/scene/Scene.h>
 #include <aven/util/History.h>
 #include <aven/volumeOperations/Filter.h>
 #include <aven/volumeOperations/OperationTool.h>

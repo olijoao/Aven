@@ -2,7 +2,7 @@
 
 #include <aven/util/geo3d.h>
 #include <aven/gui/MouseInput.h>
-#include <aven/scene/Scene.h>
+#include <aven/objects/Scene.h>
 #include <string>
 
 

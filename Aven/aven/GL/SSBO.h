@@ -22,6 +22,8 @@ namespace aven {
 			void setSubData(void const* data , GLintptr offset_bytes, GLsizeiptr  size_bytes) const;
 			void setData(void const* data, GLsizeiptr size_bytes) const;
 
+			GLuint getName();
+
 			void getData(void* dataOut) const;
 			void getDataRange(void* dataOut, GLintptr offset, GLsizeiptr length) const;
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <aven/volumeOperations/Tool.h>
-
+#include <vector>
 
 namespace aven {
 	namespace toolManager {

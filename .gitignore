@@ -1,3 +1,7 @@
+# adds .vscode folder to ignored files
+.vscode/**/*
+
+
 ## c++ gitignore
 # Prerequisites
 *.d

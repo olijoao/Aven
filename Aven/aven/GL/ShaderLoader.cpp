@@ -11,7 +11,6 @@ namespace gl {
 	namespace {
 		// parses #include "filename"
 		std::string load_and_preprocess(std::string path, std::unordered_set<std::string>& alreadyIncludedPaths) {
-			//todo what if pragma include is commented out	-> block comment...
 			std::regex const rgx(R"(#pragma[\s\t]+include[\s\t]+\"((?:.)*)\")");
 
 			alreadyIncludedPaths.insert(path);

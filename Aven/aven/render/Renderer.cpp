@@ -1,8 +1,8 @@
 
 
 #include <aven/Aven.h>
+#include <aven/objects/BrickPool.h>
 #include <aven/render/Renderer.h>
-
 
 namespace aven{
 
@@ -116,8 +116,10 @@ namespace aven{
 		program_render.setInt("camera.nbrBounces",					camera.nbrBounces.getValue());
 
 		auto volume = aven::getProject().getScene().volume;
+		//volume.glsl
+		program_render.setInt3("volume_size",					volume->getSize());
+
 		program_render.setVec3("invVolumeSize",					vec3(1.0f) / vec3(volume->getSize()));
-		program_render.setInt3("volumeSize",					volume->getSize());
 		program_render.setFloat("volume_stepSize",				volume->stepSize.getValue());
 		program_render.setFloat("volume_sigma_t",				volume->sigma_t.getValue());
 		program_render.setFloat("volume_density",				volume->density.getValue());
@@ -125,11 +127,11 @@ namespace aven{
 		program_render.setInt("volune_isDisplayingBoundingBox",	volume->isRendering_BondingBox?1:0);
 		program_render.setInt("volume_renderModeHybrid",		volume->renderingMode_Hybrid?1:0);
 
-
+		brickPool::bindSSBO_toBufferBase0();
 		auto& op= aven::getProject().getCurrentToolOperation();
 		if(!op){
 			program_render.setInt("volume_type", 0);
-			volume->getTexture().bindToTextureUnit(1);
+			volume->getSSBO().bindBufferBase(1);
 		}else{
 
 			switch (op->blendMode) {
@@ -141,10 +143,9 @@ namespace aven{
 				break;
 			}
 			
-			op->texture_mask.bindToTextureUnit(1);
-			volume->getTexture().bindToTextureUnit(2);
+			volume->getSSBO().bindBufferBase(1);
+			op->volumeData.getSSBO().bindBufferBase(2);
 			program_render.setFloat("volume_opacity", static_cast<float>(op->opacity.getValue()) / 255.0f);
-			program_render.setVec3("volume_color", op->color);
 		}
 	}
 
