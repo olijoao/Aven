@@ -36,8 +36,9 @@ namespace aven {
 	}
 
 	constexpr unsigned int brickPool::getSizeOfAllocatorInBytes() {
-		unsigned int nbrBytes = 4 * 4								// capacity + nbrFreeNodes info
-								+ CAPACITY * BRICK_SIZE_IN_4BYTES * 4U;	//actual nodes
+		unsigned int nbrBytes = 4 * 4									// capacity + nbrFreeNodes info
+								+ CAPACITY * BRICK_SIZE_IN_4BYTES * 4U
+								+ CAPACITY * 4U;	//ref count
 		return nbrBytes;
 	}
 

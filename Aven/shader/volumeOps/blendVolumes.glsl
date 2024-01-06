@@ -11,7 +11,7 @@ uniform float	opacity;
 uniform int		blendMode;
 uniform ivec3	nbrGroups;
 
-shared bool brickWasNull;
+shared bool oldBrickWasCopied;
 
 layout(local_size_x = 8, local_size_y = 8, local_size_z = 8) in;
 void main() {
@@ -25,29 +25,28 @@ void main() {
 
 				if (gl_LocalInvocationID.x == 0 && gl_LocalInvocationID.y == 0 && gl_LocalInvocationID.z == 0){
 					if (volume_2.bricks[brickPos] == BRICK_NULL) {
-						volume_2.bricks[brickPos] = brickPool_alloc();
-						brickWasNull = true;
+						volume_2.bricks[brickPos] = volume_1.bricks[brickPos];
+						brickPool_increaseRefCount(volume_2.bricks[brickPos]);
+						oldBrickWasCopied = true;			
 					}
 					else
-						brickWasNull = false;
+						oldBrickWasCopied = false;
 				}
 
 				memoryBarrierShared();
 				memoryBarrier();
 				barrier();
-
 	
+				if (oldBrickWasCopied)
+					continue;
+
 				uint ptrVoxel_dst = volume_2.bricks[brickPos] * BRICK_SIZE + localOffset;
 
 				ivec3 posVoxel = ivec3(i, j, k) * 8 + localPos;
 				if (any(greaterThanEqual(posVoxel, getVolumeSize())))
 					continue;
 				
-				vec4 a;
-				if (brickWasNull)
-					a = vec4(0, 0, 0, 0);
-				else
-					a = unpackUnorm4x8(brickPool.data[ptrVoxel_dst]);
+				vec4 a = unpackUnorm4x8(brickPool.data[ptrVoxel_dst]);
 
 				vec4 b;
 				uint brick_src = volume_1.bricks[brickPos];
