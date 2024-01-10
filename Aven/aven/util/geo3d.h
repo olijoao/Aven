@@ -15,8 +15,7 @@ namespace aven {
 		vec3 pos, dir;
 	};
 
-
-	template <typename T>
+		template <typename T>
 	class AABB {
 	public:
 		AABB(Vector3<T> min, Vector3<T> max)
@@ -60,9 +59,12 @@ namespace aven {
 
 	template <typename T>
 	inline std::optional<AABB<T>> intersect(AABB<T> const& aabb1, AABB<T> const& aabb2) {
-		auto result = AABB<T>(max(aabb1.getMin(), aabb2.getMin()), min(aabb1.getMax(), aabb2.getMax()));
-		if (any(lessThanEqual(result.getMax(), result.getMin())))
+	
+		auto result_min = max(aabb1.getMin(), aabb2.getMin());
+		auto result_max = min(aabb1.getMax(), aabb2.getMax());
+		
+		if (any(lessThanEqual(result_max, result_min)))
 			return {};
-		return result;
+		return AABB<T>(result_min, result_max);
 	}
 }

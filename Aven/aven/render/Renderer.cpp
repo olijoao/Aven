@@ -23,7 +23,10 @@ namespace aven{
 											vec3(1.0f, -1.0f, 0.0f),
 											vec3(-1.0f, -1.0f, 0.0f),
 											vec3(-1.0f, 1.0f, 0.0f),
-											vec3(1.0f, 1.0f, 0.0f) }))
+											vec3(1.0f, 1.0f, 0.0f) })), 
+		rng(std::random_device{}()),
+		distribution(0, 1)
+												
 	{
 		//...
 	}
@@ -96,12 +99,14 @@ namespace aven{
 		framebuffer_renderer.getTexture().bindToTextureUnit(0);
 		program_render.setInt("textureTarget", 0);
 
-		//rand
-		if(renderIteration == 0)
-			srand(0);
-		program_render.setVec2("rand_seed", static_cast <float> (rand()), 
-											static_cast <float> (rand()));
+		// rand
+		if (renderIteration == 0) {
+			rng.seed(0);
+			distribution.reset();
+		}
 
+		program_render.setVec2("rand_seed", (distribution(rng)), 
+											(distribution(rng)));
 
 		auto coordSystem	= camera.getCoordSystemofImagePlane();
 		auto filmSize		= camera.getFilmSize();

@@ -48,12 +48,45 @@ namespace aven {
 			ImGui::SameLine();
 			display_imgui("##mirror", tool.properties.mirrored);
 
+			ImGui::Columns(2, "Columns"); // 4-ways, with border
+	
 			// spacing
 			ImGui::Text("spacing");
-			ImGui::SameLine();
+			ImGui::NextColumn();
 			ImGui::SetNextItemWidth(50);
 			display_imgui("##spacing", tool.properties.spacing);
+			ImGui::NextColumn();
 
+			// jitter pos 
+			ImGui::Text("pos jitter");
+			ImGui::NextColumn();
+			ImGui::SetNextItemWidth(50);
+			display_imgui("##pos jitter", tool.properties.jitter_pos);
+			ImGui::NextColumn();
+
+			// jitter size
+			ImGui::Text("size jitter");
+			ImGui::NextColumn();
+			ImGui::SetNextItemWidth(50);
+			display_imgui("##size jitter", tool.properties.jitter_size);
+			ImGui::NextColumn();
+		
+			// jitter color 
+			ImGui::Text("color jitter");
+			ImGui::NextColumn();
+			ImGui::SetNextItemWidth(50);
+			display_imgui("##color jitter", tool.properties.jitter_color);
+			ImGui::NextColumn();
+
+			// jitter flow 
+			ImGui::Text("flow jitter");
+			ImGui::NextColumn();
+			ImGui::SetNextItemWidth(50);
+			display_imgui("##flow jitter", tool.properties.jitter_flow);
+			ImGui::NextColumn();
+
+			ImGui::Columns(1);
+			
 			ImGui::EndPopup();
 		}
 	}

@@ -4,7 +4,7 @@
 #include <aven/GL/SSBO.h>
 #include <aven/volumeOperations/Brush.h>
 #include <aven/objects/VolumeData.h>
-
+#include <aven/volumeOperations/ToolBrushProperties.h>
 
 namespace aven {
 	namespace volumeOps {
@@ -19,9 +19,8 @@ namespace aven {
 		VolumeData blend(VolumeData const& src, VolumeData && dst, BlendMode blendmode, float opacity);
 		
 		// in place painting
-		void paint(VolumeData& volumeData, ivec3 pos, int radius, Brush, vec4 color);
-		void paintMirror(VolumeData& volumeData, ivec3 pos, int radius, Brush, vec4 color, bvec3 mirror);
-		void paintStroke_Mirror(VolumeData& volumeData, ivec3 from, ivec3 to, int nbrIterations, int radius, Brush, vec4 color, bvec3 mirror);
+		void paint(VolumeData&, ivec3 pos, vec4 color, ToolBrushProperties const& properties); 
+		void paintStroke(VolumeData&, ivec3 from, ivec3 to, int nbrIterations, vec4 color, ToolBrushProperties const& properties);
 
 
 	}

@@ -5,6 +5,7 @@
 #include <aven/volumeOperations/VolumeOps.h>
 #include <aven/objects/BrickPool.h>
 #include <memory>
+#include <random>
 
 
 namespace aven {
@@ -80,63 +81,89 @@ namespace aven {
 
 		
 
-		void paint(VolumeData& volumeData, ivec3 pos, int radius, Brush mask, vec4 color) {
+		void paint(VolumeData& volumeData, ivec3 pos, vec4 color, ToolBrushProperties const& props) {
 			assert(prog_paintShape);
-			
-			AABB<int> aabb = { pos - radius, pos + radius };
-			auto intersection = intersect(AABB<int>({0,0,0}, volumeData.getSize()-1), aabb);
-			if (!intersection || intersection->isEmpty())
-				return;
+	
+			std::random_device dev;
+			std::mt19937 rng(dev());
+		
+			if (props.jitter_pos.getValue() > 0) {
+				auto jitter_pos = props.jitter_pos.getValue();
+				std::uniform_int_distribution<int> dist(-jitter_pos, jitter_pos);
+				pos += ivec3(dist(rng), dist(rng), dist(rng));
+			}
 
+			int radius = props.radius.getValue();
+			if (props.jitter_size.getValue() > 0) {
+				auto jitter_size = props.jitter_size.getValue();
+				std::uniform_int_distribution<int> dist(-jitter_size, jitter_size);
+				radius = clamp(radius + dist(rng), 1, props.radius.getMax());
+			}
+
+			if (props.jitter_color.getValue() > 0) {
+				auto jitter_color = props.jitter_color.getValue();
+				std::uniform_int_distribution<int> dist(-jitter_color, jitter_color);
+				vec3 col = vec3(color.x, color.y, color.z);
+				col = clamp(col + vec3(dist(rng), dist(rng), dist(rng))/255, vec3(0), vec3(1));
+				color = vec4(col.x, col.y, col.z, color.w);
+			}
+	
+			if (props.jitter_flow.getValue() > 0) {
+				auto jitter_flow = props.jitter_flow.getValue();
+				std::uniform_int_distribution<int> dist(-jitter_flow, jitter_flow);
+				color.w = clamp(color.w + static_cast<float>(dist(rng))/255, 0.0f, 1.0f);
+			}
+ 
 			volumeData.getSSBO().bindBufferBase(2);
 			prog_paintShape->setVec4("color", color);
-			prog_paintShape->setInt3("aabb_intersection_min", intersection->getMin());
-			prog_paintShape->setInt3("aabb_intersection_max", intersection->getMax());
-			prog_paintShape->setInt3("pos_center", pos);
 			prog_paintShape->setInt("radius", radius);
-			prog_paintShape->setInt("shape", static_cast<int>(mask));
-
-			ivec3 pos_minBrick	= intersection->getMin()/8;
-			ivec3 pos_maxBrick	= intersection->getMax()/8;
-			prog_paintShape->setInt3("posBrickMin", pos_minBrick);
-			prog_paintShape->setInt3("posBrickMax", pos_maxBrick);
+			prog_paintShape->setInt("shape", static_cast<int>(props.brush));
 
 			ivec3 nbrGroupsInVolume = (volumeData.getSize()+7)/8;
 			prog_paintShape->setInt3("nbrGroupsInVolume", nbrGroupsInVolume);
 
-			glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
-			gl::dispatch(*prog_paintShape, 1, 1, 1);
-		}
-
-
-		 void paintMirror(VolumeData& volumeData, ivec3 posBrush, int radius, Brush brush, vec4 color, bvec3 mirrored){
-		 	auto mirrorIterations = ivec3(mirrored.x ? 2 : 1, mirrored.y ? 2 : 1, mirrored.z ? 2 : 1);
+		 	ivec3 texSize = volumeData.getSize();
+			auto mirrorIterations = ivec3(props.mirrored.x ? 2 : 1, props.mirrored.y ? 2 : 1, props.mirrored.z ? 2 : 1);
 		 	for (int i = 0; i < mirrorIterations.x; i++) {
 		 		for (int j = 0; j < mirrorIterations.y; j++) {
 		 			for (int k = 0; k < mirrorIterations.z; k++) {
-		 				ivec3 texSize = volumeData.getSize();
-		 				ivec3 pos = ivec3(	i == 0 ? posBrush.x : texSize.x - posBrush.x, 
-		 									j == 0 ? posBrush.y : texSize.y - posBrush.y,
-		 									k == 0 ? posBrush.z : texSize.z - posBrush.z);
-		 
-		 				paint(volumeData, pos, radius, brush, color);
+		 				ivec3 posCenter = ivec3(i == 0 ? pos.x : texSize.x - pos.x, 
+		 										j == 0 ? pos.y : texSize.y - pos.y,
+		 										k == 0 ? pos.z : texSize.z - pos.z);
+						
+						AABB<int> aabb = { posCenter - radius, posCenter + radius }; 
+						auto intersection = intersect(AABB<int>({0,0,0}, volumeData.getSize()-1), aabb);
+						if (!intersection || intersection->isEmpty())
+							continue;					
+						
+						ivec3 pos_minBrick	= intersection->getMin()/8;
+						ivec3 pos_maxBrick	= intersection->getMax()/8;
+						prog_paintShape->setInt3("posBrickMin", pos_minBrick);
+						prog_paintShape->setInt3("posBrickMax", pos_maxBrick);
+						prog_paintShape->setInt3("aabb_intersection_min", intersection->getMin());
+						prog_paintShape->setInt3("aabb_intersection_max", intersection->getMax());
+						prog_paintShape->setInt3("pos_center", posCenter);
+								
+						glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+						gl::dispatch(*prog_paintShape, 1, 1, 1); 
 		 			}
 		 		}
 		 	}
-		 }
+		}
 
 
-		void paintStroke_Mirror(VolumeData& volumeData, ivec3 from, ivec3 to, int nbrIterations, int radius, Brush brush, vec4 color, bvec3 mirrored) {
+			 
+		 
+		void paintStroke(VolumeData& volumeData, ivec3 from, ivec3 to, int nbrIterations, vec4 color, ToolBrushProperties const& props ) {
 			vec3 dir = vec3(to - from);
 		
 			for (int it = 0; it < nbrIterations; it++) {
 				float t = static_cast<float>(it) / static_cast<float>(nbrIterations);
 				ivec3 pos = ivec3(vec3(from) + dir * t);		
 		
-				paintMirror(volumeData, pos, radius, brush, color, mirrored);
+				paint(volumeData, pos, color, props);
 			}		
 		}
-
-
+	
 	}
 }		

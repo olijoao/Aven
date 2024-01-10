@@ -1,6 +1,8 @@
 
 #include <aven/objects/Volume.h>
 #include <aven/objects/BrickPool.h>
+#include <aven/util/geo3d.h>
+#include <aven/volumeOperations/VolumeOps.h>
 
 namespace aven {
 
@@ -42,6 +44,18 @@ namespace aven {
 	AABB<float> Volume::getBoundingBox() const {
 		vec3 halfSize = vec3(getSize()) / 2;
 		return { pos-halfSize, {pos+halfSize}};
+	}
+
+
+	std::optional<ivec3> Volume::intersect(Ray const& ray) const {
+		auto intersection = aven::intersect(ray, getBoundingBox());
+		if (!intersection)
+			return {};
+
+		vec3 intersection_pos = ray.pos + ray.dir * intersection.value().x - this->pos;
+		intersection_pos = intersection_pos + vec3(this->getSize()) / 2;
+		Ray rayInternal = Ray(intersection_pos, ray.dir);
+		return volumeOps::raycast(this->getVolumeData(), rayInternal);
 	}
 
 }

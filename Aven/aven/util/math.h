@@ -525,6 +525,7 @@ public:
 //	mat4 functions
 //-----------------------------------------------------------------------------
 
+
 template<typename T>
 Matrix4x4<T> transpose(Matrix4x4<T> const& input) {
 	Matrix4x4<T> result;
@@ -603,5 +604,4 @@ inline mat4 mat4_perspective(float fovRadians, float aspect, float near, float f
 		0, scale, 0, 0,
 		0, 0, far / (far - near), -far * near / (far - near),
 		0, 0, 1, 1);
-
-}
+ }

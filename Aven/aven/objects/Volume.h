@@ -32,6 +32,7 @@ namespace aven {
 
 		AABB<float> getBoundingBox() const;
 
+		std::optional<ivec3> intersect(Ray const& ray) const;
 
 	public:
 		vec3 pos;

@@ -22,6 +22,7 @@ namespace aven{
 
 		void displayMainMenu();
 		void displayCanvas();
+		void displayColorPicker();
 		void displayScene();
 		void displayTools();
 		void displayToolsProperties();
@@ -208,6 +209,7 @@ namespace aven{
 
 		displayMainMenu();
 		displayScene();
+		displayColorPicker();
 		displayTools();
 		displayToolsProperties();
 		displayPopup_FilterEdit();
@@ -360,7 +362,15 @@ namespace aven{
 	}
 
 
+	void gui::displayColorPicker() {
+		ImGui::Begin("Color Chooser");
+		auto color = aven::getForegroundColor();
 
+		ImGui::SetNextItemWidth(-1);
+		if (ImGui::ColorPicker3("##Color", &color[0], ImGuiColorEditFlags_NoLabel | ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_NoSmallPreview))
+			aven::setForegroundColor(color);
+		ImGui::End();
+	}
 
 
 	void gui::displayScene() {
@@ -551,15 +561,7 @@ namespace aven{
 			ImGui::End();
 			return;
 		}
-
-		// color
-		ImGui::SetNextItemWidth(30);
-		auto color = aven::getForegroundColor();
-		if (ImGui::ColorEdit3("##Color", &color[0], ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel))
-			aven::setForegroundColor(color);
-
-
-
+		
 		auto& tools				= aven::toolManager::getTools();
 		int selectedTool_index	= aven::toolManager::getSelectedIndex();
 
@@ -734,7 +736,7 @@ namespace aven{
 		ImGui::Separator();
 		
 		for (auto entry : stats) {
-			ImGui::Text(entry.name.c_str());		ImGui::NextColumn();
+			ImGui::Text(entry.name.c_str());	ImGui::NextColumn();
 			ImGui::Text(entry.cache.c_str());	ImGui::NextColumn();
 			ImGui::Separator();
 		}
