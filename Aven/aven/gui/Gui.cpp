@@ -569,7 +569,7 @@ namespace aven{
 			if (selectedTool_index == i) 
 				ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1, 1, 1, 1));
 		
-			if (ImGui::Button((tools[i]->getName()+"##" + std::to_string(i)).c_str(), {30,30}))
+			if (ImGui::Button((tools[i].getName()+"##" + std::to_string(i)).c_str(), {30,30}))
 				aven::toolManager::select(i);
 		
 			if (selectedTool_index == i)
@@ -587,7 +587,7 @@ namespace aven{
 			return;
 		}
 
-		if (Tool* tool = aven::toolManager::getSelectedTool())
+		if (Tool_Brush* tool = aven::toolManager::getSelectedTool())
 			tool->displayImGui();
 
 		ImGui::End();

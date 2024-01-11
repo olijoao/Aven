@@ -72,7 +72,7 @@ namespace aven {
 
 
 
-	void Project::startOperation(Tool* tool, MouseInput const& mouseInput) {
+	void Project::startOperation(Tool_Brush* tool, MouseInput const& mouseInput) {
 		assert(tool);
 		assert(operation == Operation::None);
 
@@ -108,7 +108,7 @@ namespace aven {
 	}
 
 
-	Tool* Project::getToolOperation() {
+	Tool_Brush* Project::getToolOperation() {
 		return op_tool;
 	}
 

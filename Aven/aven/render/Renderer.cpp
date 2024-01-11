@@ -140,10 +140,10 @@ namespace aven{
 		}else{
 
 			switch (op->blendMode) {
-			case BlendMode::Normal:
+			case volumeOps::BlendMode::Normal:
 				program_render.setInt("volume_type", 1);
 				break;
-			case BlendMode::Erase:
+			case volumeOps::BlendMode::Erase:
 				program_render.setInt("volume_type", 2);
 				break;
 			}

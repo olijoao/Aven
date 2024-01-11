@@ -1,33 +1,38 @@
 
-#include <aven/Aven.h>
+#include <aven/aven.h>
 #include <aven/gui/ImGui_ToolProperties.h>
-#include <aven/volumeOperations/Tool_Eraser.h>
-#include <aven/volumeOperations/VolumeOps.h>
+#include <aven/volumeOperations/Tool_Brush.h>
 
 
 namespace aven {
-	Tool_Eraser::Tool_Eraser()
-		:Tool("Eraser") 
-	{	
-		//...
+
+	Tool_Brush::Tool_Brush(std::string name, volumeOps::BlendMode blendMode)
+		:name(name), blendMode(blendMode)
+	{
+		
 	}
 
-	void Tool_Eraser::start(Scene& scene, MouseInput const& mouseInput) {
+	std::string const& Tool_Brush::getName() const {
+		return name;
+	}
+
+
+	void Tool_Brush::start(Scene& scene, MouseInput const& mouseInput) {
 		auto& op = aven::getProject().getCurrentToolOperation();
 		assert(op == nullptr);
-		op = std::make_unique<OperationTool>(this, scene.volume->getSize(), properties.opacity, BlendMode::Erase);
+		op = std::make_unique<OperationTool>(this, scene.volume->getSize(), properties.opacity, blendMode);
 		apply(scene, mouseInput);
 	}
 
 
-	void Tool_Eraser::end(Scene& scene, MouseInput const& mouseInput) {
+	void Tool_Brush::end(Scene& scene, MouseInput const&) {
 		auto& op = aven::getProject().getCurrentToolOperation();
 		assert(op != nullptr && op->tool == this);
 
 		auto& volume = scene.volume;
 		auto result = volumeOps::blend(volume->getVolumeData(),
 			std::move(op->volumeData),
-			volumeOps::BlendMode::Erase,
+			op->blendMode,
 			static_cast<float>(op->opacity.getValue()) / 255.0f);
 
 		scene.volume = std::make_shared<Volume>(
@@ -37,22 +42,23 @@ namespace aven {
 			volume->density,
 			volume->stepSize,
 			std::make_shared<VolumeData>(std::move(result))
-			);
+		);
 
 		op = nullptr;
 		assert(aven::getProject().getCurrentToolOperation() == nullptr);
+
 	}
 
 
-	
-	void Tool_Eraser::apply(Scene& scene, MouseInput const& mouseInput) {
+
+	void Tool_Brush::apply(Scene& scene, MouseInput const& mouseInput) {
 		assert(aven::getProject().getCurrentToolOperation() != nullptr);
 		
 		auto& op = aven::getProject().getCurrentToolOperation();
 		assert(op && op->tool == this);
 		
 		auto& volume = scene.volume;
-
+		
 		std::optional<ivec3> optional_pos = volume->intersect(mouseInput.ray);
 		if (!optional_pos.has_value())
 			return;
@@ -63,27 +69,32 @@ namespace aven {
 		ivec3 from, to;
 		int nbrIterations;
 		if (op->brushStroke_lastPos.has_value()) {
-			from = op->brushStroke_lastPos.value();	
-			to = pos;
+			from			= op->brushStroke_lastPos.value();
+			to				= pos;
 			float	distanceToCover = distance(from, to) + op->brushStroke_distanceRemaining;
 			assert(spacing_absolute != 0);
-			nbrIterations = static_cast<int>(distanceToCover / spacing_absolute);
+			nbrIterations	= static_cast<int>(distanceToCover/spacing_absolute);
 			op->brushStroke_distanceRemaining = distanceToCover - static_cast<float>(nbrIterations) * spacing_absolute;
-		}
-		else {
+		}else {
 			from = pos;
-			to = pos;
+			to	 = pos;
 			nbrIterations = 1;
 			op->brushStroke_distanceRemaining = 0;
 		}
-		op->brushStroke_lastPos = to;	
-		
-		volumeOps::paintStroke(op->volumeData, from, to, nbrIterations, vec4(0,0,0, static_cast<float>(properties.flow.getValue())/255), properties);
+		op->brushStroke_lastPos = to;
+	
+		vec3 color = aven::getForegroundColor();
+		if (blendMode == volumeOps::BlendMode::Erase)
+			color = vec3(0, 0, 0);
+
+		volumeOps::paintStroke(op->volumeData, from, to, nbrIterations, vec4(color, static_cast<float>(properties.flow.getValue())/255), properties);
+
 	}
 
 
-	void Tool_Eraser::displayImGui() {
+	void Tool_Brush::displayImGui() {
 		display_imgui(*this);
 	}
+
 
 }

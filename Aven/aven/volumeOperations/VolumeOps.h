@@ -1,9 +1,9 @@
 #pragma once
 
-#include <aven/util/geo3d.h>
 #include <aven/GL/SSBO.h>
-#include <aven/volumeOperations/Brush.h>
 #include <aven/objects/VolumeData.h>
+#include <aven/util/geo3d.h>
+#include <aven/volumeOperations/Brush.h>
 #include <aven/volumeOperations/ToolBrushProperties.h>
 
 namespace aven {
@@ -21,7 +21,6 @@ namespace aven {
 		// in place painting
 		void paint(VolumeData&, ivec3 pos, vec4 color, ToolBrushProperties const& properties); 
 		void paintStroke(VolumeData&, ivec3 from, ivec3 to, int nbrIterations, vec4 color, ToolBrushProperties const& properties);
-
 
 	}
 }

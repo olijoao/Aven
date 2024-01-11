@@ -26,10 +26,10 @@ namespace aven {
 		void		executeFilterOperation();
 		Filter*		getFilterOperation();			//returns nullptr if getCurrentOperation() != Filter
 
-		void		startOperation(Tool* tool, MouseInput const&);
+		void		startOperation(Tool_Brush* tool, MouseInput const&);
 		void		continueToolOperation(MouseInput const&);
 		void		endToolOperation(MouseInput const&);
-		Tool*		getToolOperation();				//returns nullptr if getCurrentOperation() != Tool
+		Tool_Brush*	getToolOperation();				//returns nullptr if getCurrentOperation() != Tool
 		std::unique_ptr<OperationTool>& getCurrentToolOperation();
 
 	private:
@@ -39,7 +39,7 @@ namespace aven {
 		//current operation
 		Operation	operation	= Operation::None;
 		Filter*		op_filter	= nullptr;	// points to filter in case operation = Filter, otherwise nullptr	
-		Tool*		op_tool		= nullptr;	// points to tool in case operation = Tool, otherwise nullptr	
+		Tool_Brush*	op_tool		= nullptr;	// points to tool in case operation = Tool, otherwise nullptr	
 		std::unique_ptr<OperationTool> currentToolOperation{ nullptr };
 	};
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <aven/volumeOperations/Tool.h>
+#include <aven/volumeOperations/Tool_Brush.h>
 #include <vector>
 
 namespace aven {
@@ -8,9 +8,9 @@ namespace aven {
 		void init();
 		void destroy();
 
-		Tool* getSelectedTool();
+		Tool_Brush* getSelectedTool();
 		int getSelectedIndex();
 		void select(int);
-		std::vector<std::unique_ptr<Tool>>& getTools();
+		std::vector<Tool_Brush>& getTools();
 	}
 }

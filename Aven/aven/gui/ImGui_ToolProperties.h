@@ -2,8 +2,6 @@
 
 #include <3rdParty/imgui/imgui.h>
 #include <aven/gui/ImGui_Util.h>
-#include <aven/volumeOperations/Tool_Paint.h>
-#include <aven/volumeOperations/Tool_Eraser.h>
 
 
 namespace aven {
@@ -13,7 +11,7 @@ namespace aven {
 	concept Derived = std::is_base_of<U, T>::value;
 
 
-	template <Derived<Tool> T>
+	template <Derived<Tool_Brush> T>
 	inline void display_imgui(T& tool) {
 		// brush
 		ImGui::Text("Brush");

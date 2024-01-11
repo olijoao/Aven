@@ -171,12 +171,10 @@
     <ClCompile Include="aven\objects\Scene.cpp" />
     <ClCompile Include="aven\objects\Volume.cpp" />
     <ClCompile Include="aven\volumeOperations\OperationTool.cpp" />
-    <ClCompile Include="aven\volumeOperations\Tool.cpp" />
-    <ClCompile Include="aven\volumeOperations\Tool_Eraser.cpp" />
+    <ClCompile Include="aven\volumeOperations\Tool_Brush.cpp" />
     <ClCompile Include="aven\volumeOperations\VolumeOps.cpp" />
     <ClCompile Include="aven\volumeOperations\Filter.cpp" />
     <ClCompile Include="aven\volumeOperations\FilterManager.cpp" />
-    <ClCompile Include="aven\volumeOperations\Tool_Paint.cpp" />
     <ClCompile Include="aven\volumeOperations\ToolManager.cpp" />
     <ClCompile Include="aven\volumeOperations\VolumeOps.h" />
     <ClCompile Include="main.cpp" />
@@ -227,9 +225,7 @@
     <ClInclude Include="aven\volumeOperations\Brush.h" />
     <ClInclude Include="aven\volumeOperations\Filter.h" />
     <ClInclude Include="aven\volumeOperations\FilterManager.h" />
-    <ClInclude Include="aven\volumeOperations\Tool.h" />
-    <ClInclude Include="aven\volumeOperations\Tool_Eraser.h" />
-    <ClInclude Include="aven\volumeOperations\Tool_Paint.h" />
+    <ClInclude Include="aven\volumeOperations\Tool_Brush.h" />
     <ClInclude Include="aven\volumeOperations\ToolManager.h" />
     <ClInclude Include="shader\filter\adjustRGB.glsl" />
     <ClInclude Include="shader\lib\filter_main.glsl" />

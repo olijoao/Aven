@@ -3,7 +3,6 @@
 #include <3rdParty/imgui/imgui.h>
 #include <aven/util/clamped.h>
 #include <aven/util/math.h>
-#include <aven/volumeOperations/Tool_Paint.h>
 #include <string>
 
 

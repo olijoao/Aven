@@ -42,9 +42,6 @@
     <ClCompile Include="aven\volumeOperations\ToolManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="aven\volumeOperations\Tool_Paint.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="aven\render\ViewPortCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -57,10 +54,7 @@
     <ClCompile Include="aven\volumeOperations\VolumeOps.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="aven\volumeOperations\Tool.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="aven\volumeOperations\Tool_Eraser.cpp">
+    <ClCompile Include="aven\volumeOperations\Tool_Brush.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="aven\volumeOperations\OperationTool.cpp">
@@ -149,9 +143,6 @@
     <ClInclude Include="aven\util\Property.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="aven\volumeOperations\Tool_Paint.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="aven\gui\ImGui_Util.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -164,10 +155,7 @@
     <ClInclude Include="aven\volumeOperations\Brush.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="aven\volumeOperations\Tool_Eraser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="aven\volumeOperations\Tool.h">
+    <ClInclude Include="aven\volumeOperations\Tool_Brush.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="aven\gui\ImGui_ToolProperties.h">
