@@ -8,7 +8,8 @@
 
 namespace aven {
 	namespace volumeOps {
-		enum class BlendMode : int {Normal = 0, Erase = 1};
+		// = 0, reserved for no blending inside of Renderer
+		enum class BlendMode : int {Normal = 1, Erase = 2, Inside = 3, Color = 4};
 
 		void init();
 		void destroy();

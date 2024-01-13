@@ -133,21 +133,13 @@ namespace aven{
 		program_render.setInt("volume_renderModeHybrid",		volume->renderingMode_Hybrid?1:0);
 
 		brickPool::bindSSBO_toBufferBase0();
-		auto& op= aven::getProject().getCurrentToolOperation();
+		auto& op= aven::getProject().currentToolOperation;
 		if(!op){
 			program_render.setInt("volume_type", 0);
 			volume->getSSBO().bindBufferBase(1);
 		}else{
+			program_render.setInt("volume_type", static_cast<int>(op->blendMode));
 
-			switch (op->blendMode) {
-			case volumeOps::BlendMode::Normal:
-				program_render.setInt("volume_type", 1);
-				break;
-			case volumeOps::BlendMode::Erase:
-				program_render.setInt("volume_type", 2);
-				break;
-			}
-			
 			volume->getSSBO().bindBufferBase(1);
 			op->volumeData.getSSBO().bindBufferBase(2);
 			program_render.setFloat("volume_opacity", static_cast<float>(op->opacity.getValue()) / 255.0f);

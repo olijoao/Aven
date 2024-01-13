@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -172,6 +172,7 @@
     <ClCompile Include="aven\objects\Volume.cpp" />
     <ClCompile Include="aven\volumeOperations\OperationTool.cpp" />
     <ClCompile Include="aven\volumeOperations\Tool_Brush.cpp" />
+    <ClCompile Include="aven\volumeOperations\Tool_Line.cpp" />
     <ClCompile Include="aven\volumeOperations\VolumeOps.cpp" />
     <ClCompile Include="aven\volumeOperations\Filter.cpp" />
     <ClCompile Include="aven\volumeOperations\FilterManager.cpp" />
@@ -220,6 +221,7 @@
     <ClInclude Include="aven\objects\Volume.h" />
     <ClInclude Include="aven\volumeOperations\ToolBrushProperties.h" />
     <ClInclude Include="aven\volumeOperations\OperationTool.h" />
+    <ClInclude Include="aven\volumeOperations\Tool_Line.h" />
     <ClInclude Include="aven\_experimental\BlockAllocator.h" />
     <ClInclude Include="aven\_experimental\NodePool.h" />
     <ClInclude Include="aven\volumeOperations\Brush.h" />
@@ -254,7 +256,7 @@
     <None Include="shader\render\tonemap_frag.glsl" />
     <None Include="shader\render\tonemap_vert.glsl" />
     <None Include="shader\volumeOps\blendVolumes.glsl" />
-    <None Include="shader\volumeOps\paintShape.glsl" />
+    <None Include="shader\volumeOps\toolBrush.glsl" />
     <None Include="shader\volumeOps\raycast.glsl" />
     <None Include="shader\___todoOld\filter\TestFilter.glsl" />
     <None Include="shader\___todoOld\gui\SingleColor.glsl" />

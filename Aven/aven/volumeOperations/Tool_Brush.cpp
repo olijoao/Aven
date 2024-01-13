@@ -17,18 +17,12 @@ namespace aven {
 	}
 
 
-	void Tool_Brush::start(Scene& scene, MouseInput const& mouseInput) {
-		auto& op = aven::getProject().getCurrentToolOperation();
-		assert(op == nullptr);
-		op = std::make_unique<OperationTool>(this, scene.volume->getSize(), properties.opacity, blendMode);
-		apply(scene, mouseInput);
+	std::unique_ptr<OperationTool> Tool_Brush::start(Scene& scene) {
+		return  std::make_unique<OperationTool>(this, scene.volume->getSize(), properties.opacity, blendMode);
 	}
 
 
-	void Tool_Brush::end(Scene& scene, MouseInput const&) {
-		auto& op = aven::getProject().getCurrentToolOperation();
-		assert(op != nullptr && op->tool == this);
-
+	void Tool_Brush::end(Scene& scene, MouseInput const&, std::unique_ptr<OperationTool> op) {
 		auto& volume = scene.volume;
 		auto result = volumeOps::blend(volume->getVolumeData(),
 			std::move(op->volumeData),
@@ -43,18 +37,14 @@ namespace aven {
 			volume->stepSize,
 			std::make_shared<VolumeData>(std::move(result))
 		);
-
-		op = nullptr;
-		assert(aven::getProject().getCurrentToolOperation() == nullptr);
-
 	}
 
 
 
 	void Tool_Brush::apply(Scene& scene, MouseInput const& mouseInput) {
-		assert(aven::getProject().getCurrentToolOperation() != nullptr);
+		assert(aven::getProject().currentToolOperation != nullptr);
 		
-		auto& op = aven::getProject().getCurrentToolOperation();
+		auto& op = aven::getProject().currentToolOperation;
 		assert(op && op->tool == this);
 		
 		auto& volume = scene.volume;

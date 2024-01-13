@@ -25,7 +25,7 @@ namespace aven {
 			ssbo_raycast		= std::make_unique<gl::SSBO>(4*4);
 			prog_raycast		= std::make_unique<gl::Program>(gl::loadProgram({ {gl::ShaderType::Compute, "shader/volumeOps/raycast.glsl"} }));
 			prog_blendVolumes	= std::make_unique<gl::Program>(gl::loadProgram({ {gl::ShaderType::Compute, "shader/volumeOps/blendVolumes.glsl"} }));
-			prog_paintShape		= std::make_unique<gl::Program>(gl::loadProgram({ {gl::ShaderType::Compute, "shader/volumeOps/paintShape.glsl"} }));
+			prog_paintShape		= std::make_unique<gl::Program>(gl::loadProgram({ {gl::ShaderType::Compute, "shader/volumeOps/toolBrush.glsl"} }));
 		}
 
 

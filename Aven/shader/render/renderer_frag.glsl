@@ -11,6 +11,8 @@
 const int VOLUME_TYPE_DEFAULT           = 0;
 const int VOLUME_TYPE_BLENDED_NORMAL    = 1;
 const int VOLUME_TYPE_BLENDED_ERASE     = 2;
+const int VOLUME_TYPE_BLENDED_INSIDE    = 3;
+const int VOLUME_TYPE_BLENDED_COLOR     = 4;
 
 in vec2 pos_Pixel;
 out vec4 FragColor;
@@ -42,7 +44,6 @@ vec4 getVoxelAt(vec3 pos) {
             return getVolume_src(ipos);
         }
         case VOLUME_TYPE_BLENDED_NORMAL:{
-
             vec4 top    = getVolume_dst(ipos);
             vec4 bottom = getVolume_src(ipos);  
             top.a       *= volume_opacity;
@@ -53,6 +54,21 @@ vec4 getVoxelAt(vec3 pos) {
             vec4 bottom     = getVolume_src(ipos);
             bottom.a        = bottom.a - volume_opacity * top.a;
             return bottom;
+        }
+        case VOLUME_TYPE_BLENDED_INSIDE: {
+            vec4 bottom = getVolume_src(ipos);
+            if (bottom.a == 0) 
+                return vec4(0);
+		    vec4 top = getVolume_dst(ipos);
+			return blend_over(top, bottom);
+        }
+        case VOLUME_TYPE_BLENDED_COLOR: {
+            vec4 bottom = getVolume_src(ipos);
+            if (bottom.a == 0) 
+                return vec4(0);
+		    vec4 top = getVolume_dst(ipos);
+            vec4 c = blend_over(top, bottom);
+            return vec4(c.rgb, bottom.a);
         }
     }
     return vec4(1, 0, 1, 1);
@@ -151,7 +167,6 @@ Hit intersectWorld(Ray ray, int iteration) {
 
             t += stepSize;
         }
-
 
     }
 

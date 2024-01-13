@@ -38,7 +38,6 @@ namespace aven {
 			op_filter = nullptr;
 			break;
 		case Operation::Tool:
-			op_tool = nullptr;
 			break;
 		default:
 			assert(false);
@@ -75,11 +74,12 @@ namespace aven {
 	void Project::startOperation(Tool_Brush* tool, MouseInput const& mouseInput) {
 		assert(tool);
 		assert(operation == Operation::None);
-
+		assert(currentToolOperation == nullptr);
+	
 		operation = Operation::Tool;
-		op_tool = tool;
 
-		tool->start(getScene(), mouseInput);
+		currentToolOperation = std::move(tool->start(getScene()));
+		tool->apply(getScene(), mouseInput);
 		renderer.resetIterations();
 	}
 
@@ -87,10 +87,10 @@ namespace aven {
 
 	void Project::continueToolOperation(MouseInput const& mouseInput) {
 		assert(operation == Operation::Tool);
-		assert(op_tool);
+		assert(currentToolOperation);
 
-		if (op_tool) {
-			op_tool->apply(getScene(), mouseInput);
+		if (currentToolOperation) {
+			currentToolOperation->tool->apply(getScene(), mouseInput);
 			renderer.resetIterations();
 		}
 	}
@@ -98,22 +98,13 @@ namespace aven {
 
 	void Project::endToolOperation(MouseInput const& mouseInput) {
 		assert(operation == Operation::Tool);
-		assert(op_tool);
+		assert(currentToolOperation);
 
-		if (op_tool) {
-			op_tool->end(getScene(), mouseInput);
+		if (currentToolOperation) {
+			currentToolOperation->tool->end(getScene(), mouseInput, std::move(currentToolOperation));
 			renderer.resetIterations();
 		}
 		commitOperation();
-	}
-
-
-	Tool_Brush* Project::getToolOperation() {
-		return op_tool;
-	}
-
-	std::unique_ptr<OperationTool>& Project::getCurrentToolOperation() {
-		return currentToolOperation;
 	}
 
 
@@ -137,11 +128,8 @@ namespace aven {
 	} 
 
 
-
 	Renderer&		Project::getRenderer()	{ return renderer; }
 	History<Scene>& Project::getHistory()	{ return history; }
 	Scene&			Project::getScene()		{ return history.getCurrent(); }
-
-
 
 }

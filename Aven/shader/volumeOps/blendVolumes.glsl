@@ -4,8 +4,10 @@
 #pragma include "shader/lib/blend.glsl"
 #pragma include "shader/lib/volume.glsl"
 
-#define BLEND_MODE_NORMAL	0
-#define BLEND_MODE_ERASE	1
+#define BLEND_MODE_NORMAL	1
+#define BLEND_MODE_ERASE	2
+#define BLEND_MODE_INSIDE	3
+#define BLEND_MODE_COLOR	4
 
 uniform float	opacity;
 uniform int		blendMode;
@@ -66,6 +68,20 @@ void main() {
 				case BLEND_MODE_ERASE:
 					c = b;
 					c.a -= opacity * a.a;
+					break;
+				case BLEND_MODE_INSIDE:
+					if (b.a == 0)
+						c = vec4(0);
+					else
+						c = blend_over(a, b);
+					break;
+				case BLEND_MODE_COLOR:
+					if (b.a == 0)
+						c = vec4(0);
+					else {
+						c = blend_over(a, b);
+						c.a = b.a;
+					}
 					break;
 				}
 

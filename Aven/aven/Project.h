@@ -5,7 +5,6 @@
 #include <aven/util/History.h>
 #include <aven/volumeOperations/Filter.h>
 #include <aven/volumeOperations/OperationTool.h>
-#include <fstream>
 
 namespace aven {
 
@@ -29,8 +28,8 @@ namespace aven {
 		void		startOperation(Tool_Brush* tool, MouseInput const&);
 		void		continueToolOperation(MouseInput const&);
 		void		endToolOperation(MouseInput const&);
-		Tool_Brush*	getToolOperation();				//returns nullptr if getCurrentOperation() != Tool
-		std::unique_ptr<OperationTool>& getCurrentToolOperation();
+		
+		std::unique_ptr<OperationTool> currentToolOperation { nullptr };
 
 	private:
 		Renderer renderer;
@@ -39,8 +38,6 @@ namespace aven {
 		//current operation
 		Operation	operation	= Operation::None;
 		Filter*		op_filter	= nullptr;	// points to filter in case operation = Filter, otherwise nullptr	
-		Tool_Brush*	op_tool		= nullptr;	// points to tool in case operation = Tool, otherwise nullptr	
-		std::unique_ptr<OperationTool> currentToolOperation{ nullptr };
 	};
 
 }

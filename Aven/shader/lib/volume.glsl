@@ -53,7 +53,7 @@ vec4 getVolume_dst(ivec3 pos) {
 	uint brick = volume_2.bricks[brick_index];
 
 	if (brick == BRICK_NULL)
-		return vec4(0);
+		return vec4(0, 0, 0, 0);
 
 	ivec3 local_pos = pos - brick_pos*8;
 	uint local_offset = local_pos.x + local_pos.y * 8 + local_pos.z * 8 * 8;
