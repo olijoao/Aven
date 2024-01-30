@@ -14,7 +14,7 @@ namespace aven {
 			value = clamp(v, MIN, MAX);
 		}
 
-		T getValue() const {
+		T const& const getValue() const {
 			return value;
 		}
 

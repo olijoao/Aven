@@ -114,9 +114,6 @@
     <ClCompile Include="aven\objects\VolumeData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="aven\volumeOperations\Tool_Line.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="aven\gui\Gui.h">
@@ -266,9 +263,6 @@
     <ClInclude Include="aven\objects\VolumeData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="aven\volumeOperations\Tool_Line.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader\___todoOld\__temp\filter.glsl" />
@@ -306,6 +300,7 @@
     <None Include="shader\brickPool\BrickPool_ctor.glsl" />
     <None Include="shader\lib\volume.glsl" />
     <None Include="shader\brickPool\Volume_dtor.glsl" />
+    <None Include="shader\brickPool\BrickPool_transphere.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="3rdParty\libs\glfw3.lib" />

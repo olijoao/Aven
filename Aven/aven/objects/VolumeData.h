@@ -13,6 +13,7 @@ namespace aven {
 		VolumeData(VolumeData&&) = default;
 
 		ivec3 getSize() const;
+		gl::SSBO& getSSBO() ;
 		gl::SSBO const& getSSBO() const;
 
 	private:

@@ -19,13 +19,13 @@ namespace aven {
 
 			void bindBufferBase(GLuint bindingPoint) const;
 
-			void setSubData(void const* data , GLintptr offset_bytes, GLsizeiptr  size_bytes) const;
-			void setData(void const* data, GLsizeiptr size_bytes) const;
+			void setSubData(void const* data , GLintptr offset_bytes, GLsizeiptr  size_bytes);
+			void setData(void const* data, GLsizeiptr size_bytes);
 
 			GLuint getName();
 
 			void getData(void* dataOut) const;
-			void getDataRange(void* dataOut, GLintptr offset, GLsizeiptr length) const;
+			void getDataRange(void* dataOut, GLintptr offset_bytes, GLsizeiptr length_bytes) const;
 
 		private:
 			GLuint name;

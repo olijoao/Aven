@@ -172,7 +172,6 @@
     <ClCompile Include="aven\objects\Volume.cpp" />
     <ClCompile Include="aven\volumeOperations\OperationTool.cpp" />
     <ClCompile Include="aven\volumeOperations\Tool_Brush.cpp" />
-    <ClCompile Include="aven\volumeOperations\Tool_Line.cpp" />
     <ClCompile Include="aven\volumeOperations\VolumeOps.cpp" />
     <ClCompile Include="aven\volumeOperations\Filter.cpp" />
     <ClCompile Include="aven\volumeOperations\FilterManager.cpp" />
@@ -221,7 +220,6 @@
     <ClInclude Include="aven\objects\Volume.h" />
     <ClInclude Include="aven\volumeOperations\ToolBrushProperties.h" />
     <ClInclude Include="aven\volumeOperations\OperationTool.h" />
-    <ClInclude Include="aven\volumeOperations\Tool_Line.h" />
     <ClInclude Include="aven\_experimental\BlockAllocator.h" />
     <ClInclude Include="aven\_experimental\NodePool.h" />
     <ClInclude Include="aven\volumeOperations\Brush.h" />
@@ -236,6 +234,7 @@
   <ItemGroup>
     <None Include="shader\brickPool\BrickPool.glsl" />
     <None Include="shader\brickPool\BrickPool_ctor.glsl" />
+    <None Include="shader\brickPool\BrickPool_transphere.glsl" />
     <None Include="shader\brickPool\Volume_dtor.glsl" />
     <None Include="shader\filter\brightness_contrast.glsl" />
     <None Include="shader\filter\clear.glsl" />

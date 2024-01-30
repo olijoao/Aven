@@ -28,6 +28,9 @@ int main() {
 			std::cout << "Exception caught in main loop." << std::endl;
 			std::cout << se.what() << std::endl;
 		}
+		catch (...) {
+			std::cout << "undefined exception caught" << std::endl;
+		}
 	}
 
 

@@ -51,13 +51,13 @@ namespace aven {
 		}
 
 
-		void SSBO::setSubData(void const* data, GLintptr  offset_bytes, GLsizeiptr  size_bytes) const {
+		void SSBO::setSubData(void const* data, GLintptr  offset_bytes, GLsizeiptr  size_bytes){
 			assert(this->size_bytes >= size_bytes + offset_bytes);
 			glNamedBufferSubData(name, offset_bytes, size_bytes, data);
 			assert(!glGetError());
 		}
 
-		void SSBO::setData(void const* data, GLsizeiptr size_bytes) const {
+		void SSBO::setData(void const* data, GLsizeiptr size_bytes){
 			setSubData(data, 0, size_bytes);
 		}
 

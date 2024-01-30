@@ -8,13 +8,41 @@ namespace aven {
 		:history(Scene(size)), 
 		renderer(std::max(size.getValue().x, std::max(size.getValue().y,size.getValue().z)/2 + 100))
 	{
-		history.commit();
+	
+	}
+
+	Project::Project(clamped<ivec3, 1, 256> const size, Scene&& scene) 
+		:history(std::move(scene)),
+		renderer(std::max(size.getValue().x, std::max(size.getValue().y, size.getValue().z) / 2 + 100))
+	{
+			
+	}
+	
+
+	void Project::saveToDisk(std::string const& filename, Project const& project) {
+		std::ofstream out(filename, std::ios_base::binary);
+		if (!out)
+			throw std::runtime_error("could not open file stream \"" + filename + "\"");
+		
+		auto scene = project.history.getCurrent();
+		Scene::serialize(out, scene);
+	}
+
+
+	Project Project::loadFromDisk(std::string const& filename) {
+		std::ifstream in(filename, std::ios_base::binary);
+		if (!in)
+			throw std::runtime_error("could not open file stream \"" + filename + "\"");
+
+		Scene scene = Scene::deserialize(in);
+		return Project(scene.volume->getSize(), std::move(scene));
 	}
 
 
 	Project::Operation Project::getCurrentOperation() {
 		return operation;
 	}
+
 
 	void Project::startOperation(Filter* filter) {
 		assert(filter);	
@@ -121,6 +149,8 @@ namespace aven {
 			sptr_volume->sigma_t,
 			sptr_volume->density,
 			sptr_volume->stepSize,
+			sptr_volume->isRendering_BondingBox,
+			sptr_volume->renderingMode_Hybrid,
 			std::make_shared<VolumeData>(std::move(data))
 		);
 

@@ -35,6 +35,8 @@ namespace aven {
 			volume->sigma_t,
 			volume->density,
 			volume->stepSize,
+			volume->isRendering_BondingBox,
+			volume->renderingMode_Hybrid,
 			std::make_shared<VolumeData>(std::move(result))
 		);
 	}

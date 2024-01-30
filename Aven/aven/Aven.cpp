@@ -46,6 +46,15 @@ namespace aven {
 		project = std::make_unique<Project>(size);
 	}
 
+	void aven::saveProject(std::string const& filename) {
+		if(project)
+			Project::saveToDisk(filename, *project);
+	}
+	
+	void aven::loadProject(std::string const& filename) {
+		project = nullptr;
+		project = std::make_unique<Project>(Project::loadFromDisk(filename));
+	}
 
 	vec3 getForegroundColor() {
 		return foregroundColor;

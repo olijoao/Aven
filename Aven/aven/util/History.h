@@ -14,6 +14,7 @@ namespace aven {
 			max_undos(16) 
 		{
 			history.push_back(scene);
+			commit();
 		}
 
 		T& getCurrent() {
@@ -21,6 +22,10 @@ namespace aven {
 			return history.back();
 		}
 
+		T const& getCurrent() const{
+			assert(history.size() > 0);
+			return history.back();
+		}
 
 		void commit() {
 			assert(history.size() > 0);

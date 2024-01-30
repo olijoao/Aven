@@ -11,7 +11,12 @@ namespace aven {
 	class Project {
 	public:
 		Project(clamped<ivec3, 1, 256> const size);
+		Project(clamped<ivec3, 1, 256> const size, Scene &&);
 
+
+		static void saveToDisk(std::string const& filename, Project const&);
+		static Project loadFromDisk(std::string const& filename);
+		
 		Renderer&		getRenderer();
 		History<Scene>& getHistory();
 		Scene&			getScene() ;

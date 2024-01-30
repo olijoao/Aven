@@ -232,9 +232,13 @@ namespace aven{
 
 		//Menu File
 		if (ImGui::BeginMenu("File")) {
-			if (ImGui::MenuItem("New Project", "ctrl+N", false)) {
+			if (ImGui::MenuItem("New Project", "ctrl+N", false)) 
 				request_modalWindow_newProject = true;
-			}
+			if (ImGui::MenuItem("Save Project", "", false)) 
+				aven::saveProject("scenesFiles/abc_test.vol");
+			if (ImGui::MenuItem("Load Project", "", false)) 
+				aven::loadProject("scenesFiles/abc_test.vol");
+			
 			ImGui::EndMenu();
 		}
 

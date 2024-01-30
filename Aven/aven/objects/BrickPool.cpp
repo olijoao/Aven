@@ -9,20 +9,22 @@ namespace aven {
 	namespace {
 		std::unique_ptr<gl::SSBO> ssbo_brickPool;
 		std::unique_ptr<gl::Program> program_dtor;
+		std::unique_ptr<gl::Program> program_transphere;
 	}
+
 
 	void brickPool::init() {
 		assert(!ssbo_brickPool);
 		ssbo_brickPool	= std::make_unique<gl::SSBO>(getSizeOfAllocatorInBytes());
 
 		program_dtor = std::make_unique<gl::Program>(gl::loadProgram({ {gl::ShaderType::Compute, "shader/brickPool/volume_dtor.glsl"}}));
+		program_transphere = std::make_unique<gl::Program>(gl::loadProgram({ {gl::ShaderType::Compute, "shader/brickPool/BrickPool_transphere.glsl"}}));
 
 		auto program_Ctor = gl::loadProgram({ {gl::ShaderType::Compute, "shader/brickPool/BrickPool_ctor.glsl"}});
 		program_Ctor.setUint("capacity", CAPACITY);
 		bindSSBO_toBufferBase0();
 		glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 		gl::dispatch(program_Ctor, 1, 1, 1);
-
 	}
 
 
@@ -34,6 +36,51 @@ namespace aven {
 	void brickPool::bindSSBO_toBufferBase0() {
 		ssbo_brickPool->bindBufferBase(0);
 	}
+
+
+	brickPool::AllocatedBricks brickPool::alloc_cpu_bulk(unsigned int count)	{
+		assert(count <= nbrFreeBricks());
+		gl::SSBO ssbo(count * 4);
+		program_transphere->setUint("count", count);
+		program_transphere->setUint("isAllocating", 1);
+		bindSSBO_toBufferBase0();
+		ssbo.bindBufferBase(1);
+		glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+		gl::dispatch(*program_transphere);
+		glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+
+		std::vector<uint32_t> data;
+		data.resize(count);
+		ssbo.getData(&data[0]);
+		return AllocatedBricks(std::move(data));
+	}
+
+
+	void brickPool::free_cpu_bulk(std::vector<uint32_t> bricks) {
+		if (bricks.size() == 0)
+			return;
+		gl::SSBO ssbo(bricks.size()* 4);
+		ssbo.setData(&bricks[0], bricks.size()*4);
+	
+		program_transphere->setUint("count", bricks.size());
+		program_transphere->setUint("isAllocating", 0);
+		bindSSBO_toBufferBase0();
+		ssbo.bindBufferBase(1);
+		glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+		gl::dispatch(*program_transphere);
+	}
+
+
+
+	void brickPool::getBrickData(uint32_t brickIndex, std::array<uint32_t, BRICK_SIZE_IN_4BYTES>& data) {
+		ssbo_brickPool->getDataRange(&data, 16U + brickIndex*BRICK_SIZE_IN_4BYTES*4, BRICK_SIZE_IN_4BYTES*4 );
+	}
+
+	void brickPool::setBrickData(uint32_t brickIndex, std::array<uint32_t, BRICK_SIZE_IN_4BYTES>& data) {
+		ssbo_brickPool->setSubData(&data, 16U + brickIndex * BRICK_SIZE_IN_4BYTES * 4, BRICK_SIZE_IN_4BYTES * 4);
+	}
+
+
 
 	constexpr unsigned int brickPool::getSizeOfAllocatorInBytes() {
 		unsigned int nbrBytes = 4 * 4									// capacity + nbrFreeNodes info
