@@ -12,10 +12,10 @@ namespace aven {
 
 
 		void init() {
-			tools.emplace_back(Tool_Brush("paint", volumeOps::BlendMode::Normal));
-			tools.emplace_back(Tool_Brush("eraser", volumeOps::BlendMode::Erase));
-			tools.emplace_back(Tool_Brush("paint_internal", volumeOps::BlendMode::Inside));
-			tools.emplace_back(Tool_Brush("paint_internal", volumeOps::BlendMode::Color));
+			tools.emplace_back(Tool_Brush("paint", volumeOps::BlendMode::Normal, "img/icon_tool_brush_paint.png"));
+			tools.emplace_back(Tool_Brush("eraser", volumeOps::BlendMode::Erase, "img/icon_tool_brush_eraser.png"));
+			tools.emplace_back(Tool_Brush("paint_internal", volumeOps::BlendMode::Inside, "img/icon_tool_brush_paintInside.png"));
+			tools.emplace_back(Tool_Brush("paint_internal", volumeOps::BlendMode::Color, "img/icon_tool_brush_paintInsideColor.png"));
 		}
 
 		void destroy() {

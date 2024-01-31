@@ -40,8 +40,7 @@ namespace aven {
 	}
 
 
-
-	// Used because ImGui::DragInt appears to go temporarely over bounds 
+	// Used because ImGui::DragInt appears to go temporarely over bounds when typing in numbers 
 	template<int MIN, int MAX>
 	bool display_imgui(std::string const& displayName, clamped<int, MIN, MAX>& clamped_val, std::string format = "%d") {
 		auto value = clamped_val.getValue();
@@ -54,7 +53,7 @@ namespace aven {
 
 
 
-	// Used because ImGui::DragInt appears to go temporarely over bounds 
+	// Used because ImGui::DragInt appears to go temporarely over bounds when typing in numbers 
 	template<float MIN, float MAX>
 	bool display_imgui(std::string const& displayName, clamped<float, MIN, MAX>& clamped_val, std::string format = "%.3f") {
 		auto value = clamped_val.getValue();
@@ -65,7 +64,8 @@ namespace aven {
 		return false;
 	}
 
-	// Used because ImGui::DragInt appears to go temporarely over bounds 
+
+	// Used because ImGui::DragInt appears to go temporarely over bounds when typing in numbers 
 	template<ivec3 MIN, ivec3 MAX>
 	bool display_imgui(std::string const& displayName, clamped<ivec3, MIN, MAX>& clamped_val) {
 		auto value = clamped_val.getValue();

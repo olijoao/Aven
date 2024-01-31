@@ -13,6 +13,7 @@ namespace aven {
 
 		void render();
 		void resetIterations();
+		bool hasReachedFinalIteration();
 
 		void resize(int width, int height);
 

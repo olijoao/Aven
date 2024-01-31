@@ -13,7 +13,6 @@ namespace aven {
 		Project(clamped<ivec3, 1, 256> const size);
 		Project(clamped<ivec3, 1, 256> const size, Scene &&);
 
-
 		static void saveToDisk(std::string const& filename, Project const&);
 		static Project loadFromDisk(std::string const& filename);
 		
@@ -22,7 +21,8 @@ namespace aven {
 		Scene&			getScene() ;
 
 		// operations, state machine
-		enum class Operation { None, Filter, ValueEdit, Tool };
+		enum class Operation { None, Filter, ValueEdit, Tool, RotateCamera};
+
 		Operation	getCurrentOperation();
 		void		commitOperation();
 		void		cancelOperation();
@@ -36,12 +36,12 @@ namespace aven {
 		
 		std::unique_ptr<OperationTool> currentToolOperation { nullptr };
 
+		Operation	operation	= Operation::None;
 	private:
 		Renderer renderer;
 		History<Scene> history;
 
 		//current operation
-		Operation	operation	= Operation::None;
 		Filter*		op_filter	= nullptr;	// points to filter in case operation = Filter, otherwise nullptr	
 	};
 

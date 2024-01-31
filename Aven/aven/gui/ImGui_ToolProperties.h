@@ -14,8 +14,6 @@ namespace aven {
 	template <Derived<Tool_Brush> T>
 	inline void display_imgui(T& tool) {
 		// brush
-		ImGui::Text("Brush");
-		ImGui::SameLine();
 		ImGui::SetNextItemWidth(100);
 		char const* items[] = { "Sphere", "Cube", "Cone", "Cylinder"};
 		int brushIndex = static_cast<int>(tool.properties.brush);

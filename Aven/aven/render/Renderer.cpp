@@ -35,7 +35,7 @@ namespace aven{
 
 
 	void Renderer::render() {
-		if (renderIteration >= camera.maxSamples.getValue())
+		if(hasReachedFinalIteration())
 			return;
 
 		//change viewport
@@ -67,6 +67,10 @@ namespace aven{
 
 	void Renderer::resetIterations() {
 		renderIteration = 0;
+	}
+
+	bool Renderer::hasReachedFinalIteration() {
+		return renderIteration >= camera.maxSamples.getValue();
 	}
 
 

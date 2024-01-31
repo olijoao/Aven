@@ -152,8 +152,8 @@
     <ClCompile Include="3rdParty\imgui\imgui_draw.cpp" />
     <ClCompile Include="3rdParty\imgui\imgui_impl_glfw.cpp" />
     <ClCompile Include="3rdParty\imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="3rdParty\imgui\imgui_tables.cpp" />
     <ClCompile Include="3rdParty\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="3rdParty\imgui\misc\cpp\imgui_stdlib.cpp" />
     <ClCompile Include="aven\Aven.cpp" />
     <ClCompile Include="aven\GL\FrameBuffer.cpp" />
     <ClCompile Include="aven\GL\Program.cpp" />
@@ -162,6 +162,7 @@
     <ClCompile Include="aven\GL\SSBO.cpp" />
     <ClCompile Include="aven\GL\Texture.cpp" />
     <ClCompile Include="aven\GL\VAO.cpp" />
+    <ClCompile Include="aven\gui\KeyBindings.cpp" />
     <ClCompile Include="aven\gui\MouseInput.cpp" />
     <ClCompile Include="aven\Project.cpp" />
     <ClCompile Include="aven\render\Renderer.cpp" />
@@ -170,6 +171,7 @@
     <ClCompile Include="aven\objects\VolumeData.cpp" />
     <ClCompile Include="aven\objects\Scene.cpp" />
     <ClCompile Include="aven\objects\Volume.cpp" />
+    <ClCompile Include="aven\util\ImageIO.cpp" />
     <ClCompile Include="aven\volumeOperations\OperationTool.cpp" />
     <ClCompile Include="aven\volumeOperations\Tool_Brush.cpp" />
     <ClCompile Include="aven\volumeOperations\VolumeOps.cpp" />
@@ -189,11 +191,14 @@
     <ClInclude Include="3rdParty\imgui\imgui.h" />
     <ClInclude Include="3rdParty\imgui\imgui_impl_glfw.h" />
     <ClInclude Include="3rdParty\imgui\imgui_impl_opengl3.h" />
+    <ClInclude Include="3rdParty\imgui\imgui_impl_opengl3_loader.h" />
     <ClInclude Include="3rdParty\imgui\imgui_internal.h" />
     <ClInclude Include="3rdParty\imgui\imstb_rectpack.h" />
     <ClInclude Include="3rdParty\imgui\imstb_textedit.h" />
     <ClInclude Include="3rdParty\imgui\imstb_truetype.h" />
+    <ClInclude Include="3rdParty\stb\stb_image.h" />
     <ClInclude Include="aven\Aven.h" />
+    <ClInclude Include="aven\gui\KeyBindings.h" />
     <ClInclude Include="aven\objects\BrickPool.h" />
     <ClInclude Include="aven\objects\VolumeData.h" />
     <ClInclude Include="aven\util\clamped.h" />
@@ -205,6 +210,7 @@
     <ClInclude Include="aven\GL\SSBO.h" />
     <ClInclude Include="aven\GL\Texture.h" />
     <ClInclude Include="aven\GL\VAO.h" />
+    <ClInclude Include="aven\util\ImageIO.h" />
     <ClInclude Include="aven\util\math.h" />
     <ClInclude Include="aven\Project.h" />
     <ClInclude Include="aven\util\FpsCounter.h" />

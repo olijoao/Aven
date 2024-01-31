@@ -5,8 +5,10 @@
 #include <3rdParty/imgui/imgui.h>
 #include <3rdParty/imgui/imgui_impl_glfw.h>
 #include <3rdParty/imgui/imgui_impl_opengl3.h>
+#include <3rdParty/imgui/imgui_internal.h>
 #include <aven/Aven.h>
 #include <aven/gui/GUI.h>
+#include <aven/gui/KeyBindings.h>
 #include <aven/objects/BrickPool.h>
 #include <aven/util/FpsCounter.h>
 #include <aven/volumeOperations/FilterManager.h>
@@ -18,26 +20,37 @@
 
 namespace aven{
 	namespace gui {
+		ImVec2 operator+(ImVec2 a, ImVec2 b) { return ImVec2(a.x + b.x, a.y + b.y); };
+		ImVec2 operator+(ImVec2 a, float s) { return ImVec2(a.x + s, a.y + s); };
+		ImVec2 operator*(ImVec2 a, float s) { return ImVec2(a.x * s, a.y * s); };
+		ImVec4 operator+(ImVec4 a, ImVec4 b) { return ImVec4(a.x + b.x, a.y + b.y, a.z+b.z, a.w+b.w); };
+
 		GLFWwindow* glfwWindow;
 
 		void displayMainMenu();
 		void displayCanvas();
 		void displayColorPicker();
 		void displayScene();
-		void displayTools();
-		void displayToolsProperties();
+
+		void displayChildWindow_Tools();
+		void displayChildWindow_ToolsProperties();
 
 		void displayPopup_FilterEdit();
 		void displayPopup_NewProject();
 
 		void displayDevWindow();
 
+
 		//
-		ImVec2	lastFrame_contentSizeSceneViewer = ImVec2(-1, -1);
 		bool	wasFilterPopupOpenLastFrame = false;
-		enum class SceneViewer_state {Default, RotatingCamera, Tool};
-		SceneViewer_state sceneViewerState = SceneViewer_state::Default;
+		// enum class SceneViewer_state {Default, RotatingCamera, Tool};
+		// SceneViewer_state sceneViewerState = SceneViewer_state::Default;
 		bool request_modalWindow_newProject = false;	
+
+			
+		void character_callback(GLFWwindow* window, unsigned int codepoint) {
+			keybindings::pushChar(codepoint);
+		}
 
 		void startFrame() {
 			glfwPollEvents();
@@ -51,58 +64,6 @@ namespace aven{
 			ImGui::Render();
 			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 			glfwSwapBuffers(glfwWindow);
-		}
-
-		//key strokes
-		struct KeycharAndModifier {
-			const unsigned int CTRL_BIT = 1;
-			const unsigned int SHIFT_BIT = 2;
-			const unsigned int ALT_BIT = 4;
-			KeycharAndModifier(unsigned int character, bool mod_ctrl = false, bool mod_shift = false, bool mod_alt = false)
-				:character(character),
-				mods((mod_ctrl ? CTRL_BIT : 0)
-					| (mod_shift ? SHIFT_BIT : 0)
-					| (mod_alt ? ALT_BIT : 0))
-			{
-
-			}
-
-			bool operator==(KeycharAndModifier const&) const = default;
-
-			unsigned int character;
-			unsigned int mods;
-		};
-
-		std::vector<KeycharAndModifier> inputqeue_char;
-		struct KeyHasher {
-			std::size_t operator()(KeycharAndModifier const& character) const {
-				return character.character ^ character.mods;
-			}
-		};
-
-		std::unordered_map<KeycharAndModifier, std::function<void()>, KeyHasher> keyStrokes;	//<modifier, character>
-		void callback_char(GLFWwindow* window, unsigned int c) {
-			inputqeue_char.push_back({ c });
-		}
-
-		void addKeyStroke(KeycharAndModifier key, std::function<void()> f) {
-			keyStrokes.insert({ key, f });
-		}
-
-		void handleKeyEvents() {
-			if (ImGui::GetIO().WantCaptureKeyboard) {
-				inputqeue_char.clear();
-				return;
-			}
-
-			while (!inputqeue_char.empty()) {
-				auto c = inputqeue_char.back();
-				inputqeue_char.pop_back();
-
-				auto action = keyStrokes.find(c);
-				if (action != keyStrokes.end())
-					action->second();
-			}
 		}
 	}
 
@@ -130,9 +91,7 @@ namespace aven{
 
 		glfwSwapInterval(0);
 
-		//
-		glfwSetCharCallback(glfwWindow, callback_char);
-
+		glfwSetCharCallback(glfwWindow, character_callback);
 
 		//init glad
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -191,13 +150,14 @@ namespace aven{
 		style.WindowTitleAlign						= ImVec2(.5f, .5f);
 
 		//keyStrokes
-		addKeyStroke({'z'}, []() { aven::getProject().getHistory().undo(); aven::getProject().getRenderer().resetIterations(); });
-		addKeyStroke({'y'}, []() { aven::getProject().getHistory().redo(); aven::getProject().getRenderer().resetIterations(); });
+		keybindings::addKeyStroke({'z'}, []() { aven::getProject().getHistory().undo(); aven::getProject().getRenderer().resetIterations(); });
+		keybindings::addKeyStroke({'y'}, []() { aven::getProject().getHistory().redo(); aven::getProject().getRenderer().resetIterations(); });
 	}	 
 
 
 	void gui::destroy() {
 		ImGui_ImplGlfw_Shutdown();
+		ImGui_ImplOpenGL3_Shutdown();
 		ImGui::DestroyContext();
 		glfwTerminate();
 	}
@@ -205,19 +165,16 @@ namespace aven{
 
 	void gui::display() {
 		startFrame();
-		handleKeyEvents();
+		keybindings::handleKeyEvents();
 
 		displayMainMenu();
 		displayScene();
 		displayColorPicker();
-		displayTools();
-		displayToolsProperties();
 		displayPopup_FilterEdit();
 		displayPopup_NewProject();
 		displayDevWindow();
 
-		// displayScene() and displayToolsProperties() needs to be called before displayCanvas()
-		// after changing a value in displayScene. 
+		// displayScene() needs to be called before displayCanvas()
 		// Starting drawing while the inputfield is still active leads to:
 		// if(IsItemDeactivatedAfterEdit) commitHistory();  being called after aven::startOperation(Tool)
 		displayCanvas();
@@ -274,18 +231,16 @@ namespace aven{
 	void gui::displayCanvas() {
 
 		bool open = true;
-		auto flags =	ImGuiWindowFlags_NoScrollbar 
-					|	ImGuiWindowFlags_NoScrollWithMouse 
-					|	ImGuiWindowFlags_NoMove
-					|	ImGuiWindowFlags_NoTitleBar;
-		ImGui::Begin("SceneViewer", &open, flags);
-
+		auto flags =		ImGuiWindowFlags_NoScrollbar
+						|	ImGuiWindowFlags_NoScrollWithMouse
+						|	ImGuiWindowFlags_NoTitleBar;
+		ImGui::Begin("Canvas", &open, flags);
+		
 		// resize render texture if needed
 		ImVec2 contentRegion = ImGui::GetContentRegionAvail();
-		if (contentRegion.x != lastFrame_contentSizeSceneViewer.x || contentRegion.y != lastFrame_contentSizeSceneViewer.y) {
+		auto rendererSize = aven::getProject().getRenderer().getTexture().getSize();
+		if (contentRegion.x != rendererSize.x || contentRegion.y != rendererSize.y) 
 			aven::getProject().getRenderer().resize(static_cast<int>(contentRegion.x), static_cast<int>(contentRegion.y));
-			lastFrame_contentSizeSceneViewer = contentRegion;
-		}
 
 		auto contentRegionMin			= vec2(ImGui::GetWindowContentRegionMin().x, ImGui::GetWindowContentRegionMin().y);
 		auto contentRegionMax			= vec2(ImGui::GetWindowContentRegionMax().x, ImGui::GetWindowContentRegionMax().y);
@@ -295,8 +250,10 @@ namespace aven{
 
 		posMouse_relative_inViewer.y	= 1.0f - posMouse_relative_inViewer.y;
 
+		auto& project = aven::getProject();
+
 		//mouse wheel
-		if (ImGui::IsWindowHovered()) {
+		if (project.getCurrentOperation() == Project::Operation::None && ImGui::IsWindowHovered()) {
 			if (float mouseWheel = ImGui::GetIO().MouseWheel) {
 				auto& camera = aven::getProject().getRenderer().getCamera();
 				camera.fov_degrees += -mouseWheel;
@@ -306,25 +263,21 @@ namespace aven{
 
 
 		// mouse press
-		if (sceneViewerState == SceneViewer_state::Default && ImGui::IsWindowHovered()) {
-			assert(sceneViewerState == SceneViewer_state::Default);
-
-			if (ImGui::IsMouseClicked(2)) {
-				sceneViewerState = SceneViewer_state::RotatingCamera;
-			}
+		if (project.getCurrentOperation() == Project::Operation::None && ImGui::IsWindowHovered()) {
+			if (ImGui::IsMouseClicked(2)) 
+				project.operation = Project::Operation::RotateCamera;
+		
 
 			if (ImGui::IsMouseClicked(0)) {
 				auto* tool = aven::toolManager::getSelectedTool();
-				if (tool) {
-					sceneViewerState = SceneViewer_state::Tool;
+				if (tool) 
 					aven::getProject().startOperation(tool, {posMouse_relative_inViewer, aven::getProject().getRenderer().getCamera().createRay(posMouse_relative_inViewer)});
-				}
 			}
 		}
 
 
 		//drag: rotate camera
-		if (sceneViewerState == SceneViewer_state::RotatingCamera && ImGui::IsMouseDragging(2)) {
+		if (project.operation == Project::Operation::RotateCamera && ImGui::IsMouseDragging(2)) {
 			auto dragDelta = ImGui::GetMouseDragDelta(2);
 			if ((abs(dragDelta.x) > 0 || abs(dragDelta.y) > 0)) {
 				aven::getProject().getRenderer().getCamera().rotateAroundTarget(-dragDelta.x * 0.01f, -dragDelta.y * 0.01f);
@@ -334,7 +287,7 @@ namespace aven{
 		}
 
 		//drag: tool
-		else if (sceneViewerState == SceneViewer_state::Tool && ImGui::IsMouseDragging(0)) {
+		else if (project.operation == Project::Operation::Tool && ImGui::IsMouseDragging(0)) {
 			auto dragDelta = ImGui::GetMouseDragDelta(0);
 			if ((abs(dragDelta.x) > 0 || abs(dragDelta.y) > 0)) {
 				aven::getProject().continueToolOperation({ posMouse_relative_inViewer, aven::getProject().getRenderer().getCamera().createRay(posMouse_relative_inViewer) });
@@ -344,14 +297,13 @@ namespace aven{
 		}
 
 		//release: rotate camera
-		if (sceneViewerState == SceneViewer_state::RotatingCamera && ImGui::IsMouseReleased(2)) {
-			sceneViewerState = SceneViewer_state::Default;
+		if (project.operation == Project::Operation::RotateCamera && ImGui::IsMouseReleased(2)) {
+			project.operation = Project::Operation::None;
 		}
 
 		//release: tool
-		else if(sceneViewerState == SceneViewer_state::Tool && ImGui::IsMouseReleased(0)) {
+		else if(project.operation == Project::Operation::Tool && ImGui::IsMouseReleased(0)) {
 			aven::getProject().endToolOperation({ posMouse_relative_inViewer, aven::getProject().getRenderer().getCamera().createRay(posMouse_relative_inViewer) });
-			sceneViewerState = SceneViewer_state::Default;
 		}
 		
 
@@ -360,7 +312,9 @@ namespace aven{
 		renderer.render();
 		auto& texture = renderer.getTexture();
 		ImGui::Image(ImTextureID(ImTextureID(texture.getTextureName())), ImVec2(texture.getWidth(), texture.getHeight()));
-
+		
+		displayChildWindow_ToolsProperties();
+		displayChildWindow_Tools();
 
 		ImGui::End();
 	}
@@ -385,13 +339,12 @@ namespace aven{
 			return;
 		}
 
-		//Camera
+		//Camera 
 		if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen)) {
 			ImGui::Columns(2, nullptr, false);
 			
 			auto& renderer	= aven::getProject().getRenderer();
 			auto& cam		= renderer.getCamera();
-
 
 			ImGui::Text("fov");	
 			ImGui::NextColumn();
@@ -559,42 +512,46 @@ namespace aven{
 
 
 
-	void gui::displayTools() {
-
-		if (!ImGui::Begin("tools")) {
-			ImGui::End();
-			return;
-		}
+	void gui::displayChildWindow_Tools() {
+		const float iconSize = 30;
+		ImGui::SetNextWindowPos(ImGui::GetWindowContentRegionMin() + ImGui::GetWindowPos() + ImVec2(5,40));
+		ImGui::BeginChild("Tools", ImVec2(100, 0));
 		
 		auto& tools				= aven::toolManager::getTools();
 		int selectedTool_index	= aven::toolManager::getSelectedIndex();
 
+		ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg) + ImVec4(0.1f, 0.1f, 0.1f, 0));
 		for (size_t i = 0; i < tools.size(); i++) {
 			if (selectedTool_index == i) 
-				ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1, 1, 1, 1));
-		
-			if (ImGui::Button((tools[i].getName()+"##" + std::to_string(i)).c_str(), {30,30}))
-				aven::toolManager::select(i);
-		
-			if (selectedTool_index == i)
+				ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0.4f, 0.4f, 1));
+			
+			std::string stringId = tools[i].getName() + "##" + std::to_string(i);
+			auto& icon = tools[i].getIcon();
+			if (icon.has_value()) {
+				if (ImGui::ImageButton(stringId.c_str(), ImTextureID(icon->getTextureName()), {iconSize,iconSize}))
+					aven::toolManager::select(i);
+			} else {
+				if (ImGui::Button(stringId.c_str(), ImVec2(iconSize, iconSize)+ImGui::GetStyle().FramePadding * 2.0f))
+					aven::toolManager::select(i);
+			}
+
+			if (selectedTool_index == i) 
 				ImGui::PopStyleColor();
 		}
-
-		ImGui::End();
+		ImGui::PopStyleColor(2);
+		ImGui::EndChild();
 	}
 
 
 
-	void gui::displayToolsProperties() {
-		if (!ImGui::Begin("ToolsProperties")) {
-			ImGui::End();
-			return;
-		}
-
-		if (Tool_Brush* tool = aven::toolManager::getSelectedTool())
+	void gui::displayChildWindow_ToolsProperties() {
+		if (Tool_Brush* tool = aven::toolManager::getSelectedTool()) {
+			ImGui::SetNextWindowPos(ImGui::GetWindowContentRegionMin() + ImGui::GetWindowPos() + ImVec2(60,10));
+			ImGui::BeginChild("ToolsProperties", ImVec2(0, 100));
 			tool->displayImGui();
-
-		ImGui::End();
+			ImGui::EndChild();
+		}
 	}
 
 
@@ -685,7 +642,6 @@ namespace aven{
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(120.0f / 360, 0.8f, 0.8f));
 			if (ImGui::Button("Apply", ImVec2(120, 0))) {
 				aven::newProject(size);
-				lastFrame_contentSizeSceneViewer = ImVec2(-1, -1);
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::PopStyleColor(3);

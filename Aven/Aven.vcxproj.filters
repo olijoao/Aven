@@ -66,9 +66,6 @@
     <ClCompile Include="3rdParty\GL\glad.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="3rdParty\imgui\misc\cpp\imgui_stdlib.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="3rdParty\imgui\imgui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -112,6 +109,84 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="aven\objects\VolumeData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\imgui\examples\example_emscripten\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\imgui\examples\example_glfw_vulkan\out\build\x64-Debug\CMakeFiles\3.16.19112601-MSVC_2\CompilerIdC\CMakeCCompilerId.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\imgui\examples\example_glfw_vulkan\out\build\x64-Debug\CMakeFiles\3.16.19112601-MSVC_2\CompilerIdCXX\CMakeCXXCompilerId.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\imgui\examples\example_glfw_vulkan\out\build\x64-Debug\CMakeFiles\ShowIncludes\main.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\imgui\examples\example_marmalade\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\imgui\examples\example_sdl_directx11\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\imgui\examples\example_sdl_opengl2\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\imgui\examples\example_sdl_opengl3\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\imgui\examples\example_sdl_vulkan\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\imgui\examples\libs\gl3w\GL\gl3w.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\imgui\examples\imgui_impl_allegro5.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\imgui\examples\imgui_impl_dx9.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\imgui\examples\imgui_impl_dx10.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\imgui\examples\imgui_impl_dx11.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\imgui\examples\imgui_impl_dx12.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\imgui\examples\imgui_impl_glfw.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\imgui\examples\imgui_impl_glut.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\imgui\examples\imgui_impl_marmalade.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\imgui\examples\imgui_impl_opengl2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\imgui\examples\imgui_impl_opengl3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\imgui\examples\imgui_impl_sdl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\imgui\examples\imgui_impl_vulkan.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\imgui\examples\imgui_impl_win32.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\imgui\imgui_tables.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\imgui\imgui_impl_opengl3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\imgui\imgui_impl_glfw.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -263,6 +338,78 @@
     <ClInclude Include="aven\objects\VolumeData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="3rdParty\imgui\examples\example_apple_metal\Shared\AppDelegate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\imgui\examples\example_apple_metal\Shared\Renderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\imgui\examples\example_apple_metal\Shared\ViewController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\imgui\examples\example_glfw_vulkan\out\build\x64-Debug\CMakeFiles\ShowIncludes\foo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\imgui\examples\libs\gl3w\GL\gl3w.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\imgui\examples\libs\gl3w\GL\glcorearb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\imgui\examples\imgui_impl_allegro5.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\imgui\examples\imgui_impl_dx9.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\imgui\examples\imgui_impl_dx10.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\imgui\examples\imgui_impl_dx11.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\imgui\examples\imgui_impl_dx12.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\imgui\examples\imgui_impl_glfw.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\imgui\examples\imgui_impl_glut.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\imgui\examples\imgui_impl_marmalade.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\imgui\examples\imgui_impl_metal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\imgui\examples\imgui_impl_opengl2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\imgui\examples\imgui_impl_opengl3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\imgui\examples\imgui_impl_osx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\imgui\examples\imgui_impl_sdl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\imgui\examples\imgui_impl_vulkan.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\imgui\examples\imgui_impl_win32.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\imgui\imgui_impl_opengl3_loader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\imgui\imgui_impl_opengl3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\imgui\imgui_impl_glfw.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader\___todoOld\__temp\filter.glsl" />
@@ -301,6 +448,13 @@
     <None Include="shader\lib\volume.glsl" />
     <None Include="shader\brickPool\Volume_dtor.glsl" />
     <None Include="shader\brickPool\BrickPool_transphere.glsl" />
+    <None Include="3rdParty\imgui\examples\example_emscripten\shell_minimal.html" />
+    <None Include="3rdParty\imgui\examples\example_glfw_vulkan\out\build\x64-Debug\CMakeFiles\3.16.19112601-MSVC_2\CMakeDetermineCompilerABI_C.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="3rdParty\imgui\examples\example_glfw_vulkan\out\build\x64-Debug\CMakeFiles\3.16.19112601-MSVC_2\CMakeDetermineCompilerABI_CXX.bin">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Library Include="3rdParty\libs\glfw3.lib" />

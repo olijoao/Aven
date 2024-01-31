@@ -1,21 +1,29 @@
 
 #include <aven/aven.h>
 #include <aven/gui/ImGui_ToolProperties.h>
+#include <aven/util/ImageIO.h>
 #include <aven/volumeOperations/Tool_Brush.h>
 
 
 namespace aven {
 
-	Tool_Brush::Tool_Brush(std::string name, volumeOps::BlendMode blendMode)
+	Tool_Brush::Tool_Brush(std::string name, volumeOps::BlendMode blendMode, std::string const& path_icon)
 		:name(name), blendMode(blendMode)
 	{
-		
+		if (path_icon != "") {
+			icon = imageIO::load(path_icon);
+			icon->setMinFilter(gl::Tex_Min_Filter::LINEAR);
+		}
 	}
+
 
 	std::string const& Tool_Brush::getName() const {
 		return name;
 	}
 
+	std::optional<gl::Texture2D_rgba8u> const& Tool_Brush::getIcon() const {
+		return icon;
+	}
 
 	std::unique_ptr<OperationTool> Tool_Brush::start(Scene& scene) {
 		return  std::make_unique<OperationTool>(this, scene.volume->getSize(), properties.opacity, blendMode);
