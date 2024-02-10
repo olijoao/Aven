@@ -7,7 +7,7 @@ namespace aven {
 	void destroy();
 
 	Project&	getProject();
-	void		newProject(clamped<ivec3, 1, 256> size);
+	void		newProject(c_ivec3<1, Volume::MAX_VOLUME_LENGTH> size);
 	void		saveProject(std::string const& filename);
 	void		loadProject(std::string const& filename);
 

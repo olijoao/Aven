@@ -121,7 +121,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -166,11 +166,12 @@
     <ClCompile Include="aven\gui\MouseInput.cpp" />
     <ClCompile Include="aven\Project.cpp" />
     <ClCompile Include="aven\render\Renderer.cpp" />
-    <ClCompile Include="aven\render\ViewPortCamera.cpp" />
+    <ClCompile Include="aven\objects\ViewPortCamera.cpp" />
     <ClCompile Include="aven\objects\BrickPool.cpp" />
     <ClCompile Include="aven\objects\VolumeData.cpp" />
     <ClCompile Include="aven\objects\Scene.cpp" />
     <ClCompile Include="aven\objects\Volume.cpp" />
+    <ClCompile Include="aven\render\RenderSettings.cpp" />
     <ClCompile Include="aven\util\ImageIO.cpp" />
     <ClCompile Include="aven\volumeOperations\OperationTool.cpp" />
     <ClCompile Include="aven\volumeOperations\Tool_Brush.cpp" />
@@ -201,6 +202,7 @@
     <ClInclude Include="aven\gui\KeyBindings.h" />
     <ClInclude Include="aven\objects\BrickPool.h" />
     <ClInclude Include="aven\objects\VolumeData.h" />
+    <ClInclude Include="aven\render\RenderSettings.h" />
     <ClInclude Include="aven\util\clamped.h" />
     <ClInclude Include="aven\util\geo3d.h" />
     <ClInclude Include="aven\GL\Framebuffer.h" />
@@ -219,7 +221,7 @@
     <ClInclude Include="aven\gui\MouseInput.h" />
     <ClInclude Include="aven\util\History.h" />
     <ClInclude Include="aven\util\Property.h" />
-    <ClInclude Include="aven\render\ViewPortCamera.h" />
+    <ClInclude Include="aven\objects\ViewPortCamera.h" />
     <ClInclude Include="aven\gui\Gui.h" />
     <ClInclude Include="aven\render\Renderer.h" />
     <ClInclude Include="aven\objects\Scene.h" />

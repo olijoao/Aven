@@ -3,13 +3,12 @@
 #include <aven/GL/Framebuffer.h>
 #include <aven/GL/ShaderLoader.h>
 #include <aven/GL/VAO.h>
-#include <aven/render/ViewPortCamera.h>
 #include <random>
 
 namespace aven {
 	class Renderer {
 	public:
-		Renderer(float cameraDistance);
+		Renderer();
 
 		void render();
 		void resetIterations();
@@ -18,13 +17,10 @@ namespace aven {
 		void resize(int width, int height);
 
 		gl::Texture2D_rgba8u const& getTexture() const;
-		ViewPortCamera& getCamera();
 
 		gl::Program const& getRenderProgram() const;
 
 	private:
-		ViewPortCamera camera;
-		
 		std::mt19937 rng;
 		std::uniform_real_distribution<float> distribution;
 

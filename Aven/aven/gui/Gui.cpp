@@ -150,8 +150,8 @@ namespace aven{
 		style.WindowTitleAlign						= ImVec2(.5f, .5f);
 
 		//keyStrokes
-		keybindings::addKeyStroke({'z'}, []() { aven::getProject().getHistory().undo(); aven::getProject().getRenderer().resetIterations(); });
-		keybindings::addKeyStroke({'y'}, []() { aven::getProject().getHistory().redo(); aven::getProject().getRenderer().resetIterations(); });
+		keybindings::addKeyStroke({'z'}, []() { aven::getProject().history.undo(); aven::getProject().renderer.resetIterations(); });
+		keybindings::addKeyStroke({'y'}, []() { aven::getProject().history.redo(); aven::getProject().renderer.resetIterations(); });
 	}	 
 
 
@@ -165,19 +165,28 @@ namespace aven{
 
 	void gui::display() {
 		startFrame();
-		keybindings::handleKeyEvents();
 
-		displayMainMenu();
-		displayScene();
-		displayColorPicker();
-		displayPopup_FilterEdit();
-		displayPopup_NewProject();
-		displayDevWindow();
+		try {
+			keybindings::handleKeyEvents();
+			
+			displayMainMenu();
+			displayScene();
+			displayColorPicker();
+			displayPopup_FilterEdit();
+			displayPopup_NewProject();
+			displayDevWindow();
 
-		// displayScene() needs to be called before displayCanvas()
-		// Starting drawing while the inputfield is still active leads to:
-		// if(IsItemDeactivatedAfterEdit) commitHistory();  being called after aven::startOperation(Tool)
-		displayCanvas();
+			// displayScene() needs to be called before displayCanvas()
+			// Starting drawing while the inputfield is still active leads to:
+			// if(IsItemDeactivatedAfterEdit) commitHistory();  being called after aven::startOperation(Tool)
+			displayCanvas();
+		}
+		catch (std::exception const& se) {
+			std::cout << std::endl;
+			std::cout << "Exception caught in gui loop: " << std::endl;
+			std::cout << se.what() << std::endl;
+			ImGui::ErrorCheckEndFrameRecover(nullptr, nullptr);
+		}
 
 		endFrame();
 	}
@@ -202,13 +211,13 @@ namespace aven{
 		
 		//Menu Edit
 		if (ImGui::BeginMenu("Edit")) {
-			if (ImGui::MenuItem("undo", "ctrl+Z", false, aven::getProject().getHistory().undoable())) {
-				aven::getProject().getHistory().undo();
-				aven::getProject().getRenderer().resetIterations();
+			if (ImGui::MenuItem("undo", "ctrl+Z", false, aven::getProject().history.undoable())) {
+				aven::getProject().history.undo();
+				aven::getProject().renderer.resetIterations();
 			}
-			if (ImGui::MenuItem("redo", "ctrl+shift+Z", false, aven::getProject().getHistory().redoable())){
-				aven::getProject().getHistory().redo();
-				aven::getProject().getRenderer().resetIterations();
+			if (ImGui::MenuItem("redo", "ctrl+shift+Z", false, aven::getProject().history.redoable())){
+				aven::getProject().history.redo();
+				aven::getProject().renderer.resetIterations();
 			}
 			ImGui::EndMenu();
 		}
@@ -238,9 +247,9 @@ namespace aven{
 		
 		// resize render texture if needed
 		ImVec2 contentRegion = ImGui::GetContentRegionAvail();
-		auto rendererSize = aven::getProject().getRenderer().getTexture().getSize();
+		auto rendererSize = aven::getProject().renderer.getTexture().getSize();
 		if (contentRegion.x != rendererSize.x || contentRegion.y != rendererSize.y) 
-			aven::getProject().getRenderer().resize(static_cast<int>(contentRegion.x), static_cast<int>(contentRegion.y));
+			aven::getProject().renderer.resize(static_cast<int>(contentRegion.x), static_cast<int>(contentRegion.y));
 
 		auto contentRegionMin			= vec2(ImGui::GetWindowContentRegionMin().x, ImGui::GetWindowContentRegionMin().y);
 		auto contentRegionMax			= vec2(ImGui::GetWindowContentRegionMax().x, ImGui::GetWindowContentRegionMax().y);
@@ -255,9 +264,14 @@ namespace aven{
 		//mouse wheel
 		if (project.getCurrentOperation() == Project::Operation::None && ImGui::IsWindowHovered()) {
 			if (float mouseWheel = ImGui::GetIO().MouseWheel) {
-				auto& camera = aven::getProject().getRenderer().getCamera();
-				camera.fov_degrees += -mouseWheel;
-				aven::getProject().getRenderer().resetIterations();
+				auto& camera = aven::getProject().camera;
+				auto dir =  camera.pos - camera.target;
+				auto dist = distance(camera.pos, camera.target);
+				assert(dist > 0.0001f);
+				dist -= mouseWheel*5;
+				dist = std::max(dist, 0.01f);
+				camera.pos = camera.target + normalize(dir) * dist;
+				aven::getProject().renderer.resetIterations();
 			}
 		}
 
@@ -271,7 +285,7 @@ namespace aven{
 			if (ImGui::IsMouseClicked(0)) {
 				auto* tool = aven::toolManager::getSelectedTool();
 				if (tool) 
-					aven::getProject().startOperation(tool, {posMouse_relative_inViewer, aven::getProject().getRenderer().getCamera().createRay(posMouse_relative_inViewer)});
+					aven::getProject().startOperation(tool, {posMouse_relative_inViewer, aven::getProject().camera.createRay(posMouse_relative_inViewer)});
 			}
 		}
 
@@ -280,8 +294,8 @@ namespace aven{
 		if (project.operation == Project::Operation::RotateCamera && ImGui::IsMouseDragging(2)) {
 			auto dragDelta = ImGui::GetMouseDragDelta(2);
 			if ((abs(dragDelta.x) > 0 || abs(dragDelta.y) > 0)) {
-				aven::getProject().getRenderer().getCamera().rotateAroundTarget(-dragDelta.x * 0.01f, -dragDelta.y * 0.01f);
-				aven::getProject().getRenderer().resetIterations();
+				aven::getProject().camera.rotateAroundTarget(-dragDelta.x * 0.01f, -dragDelta.y * 0.01f);
+				aven::getProject().renderer.resetIterations();
 				ImGui::ResetMouseDragDelta(2);
 			}
 		}
@@ -290,7 +304,7 @@ namespace aven{
 		else if (project.operation == Project::Operation::Tool && ImGui::IsMouseDragging(0)) {
 			auto dragDelta = ImGui::GetMouseDragDelta(0);
 			if ((abs(dragDelta.x) > 0 || abs(dragDelta.y) > 0)) {
-				aven::getProject().continueToolOperation({ posMouse_relative_inViewer, aven::getProject().getRenderer().getCamera().createRay(posMouse_relative_inViewer) });
+				aven::getProject().continueToolOperation({ posMouse_relative_inViewer, aven::getProject().camera.createRay(posMouse_relative_inViewer) });
 				ImGui::ResetMouseDragDelta(0);
 			}
 				
@@ -303,12 +317,12 @@ namespace aven{
 
 		//release: tool
 		else if(project.operation == Project::Operation::Tool && ImGui::IsMouseReleased(0)) {
-			aven::getProject().endToolOperation({ posMouse_relative_inViewer, aven::getProject().getRenderer().getCamera().createRay(posMouse_relative_inViewer) });
+			aven::getProject().endToolOperation({ posMouse_relative_inViewer, aven::getProject().camera.createRay(posMouse_relative_inViewer) });
 		}
 		
 
 		// RenderPanel
-		auto& renderer = aven::getProject().getRenderer();
+		auto& renderer = aven::getProject().renderer;
 		renderer.render();
 		auto& texture = renderer.getTexture();
 		ImGui::Image(ImTextureID(ImTextureID(texture.getTextureName())), ImVec2(texture.getWidth(), texture.getHeight()));
@@ -339,61 +353,130 @@ namespace aven{
 			return;
 		}
 
-		//Camera 
-		if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen)) {
+		//RenderSettings
+		if (ImGui::CollapsingHeader("RenderSettings", ImGuiTreeNodeFlags_DefaultOpen)) {
 			ImGui::Columns(2, nullptr, false);
 			
-			auto& renderer	= aven::getProject().getRenderer();
-			auto& cam		= renderer.getCamera();
 
-			ImGui::Text("fov");	
-			ImGui::NextColumn();
-			ImGui::SetNextItemWidth(-1);
-			if(display_imgui("##fov", cam.fov_degrees))
-				renderer.resetIterations();
-			ImGui::NextColumn();
+			{
+				ImGui::Text("gamma");
+				ImGui::NextColumn();
 
-			ImGui::Text("gamma");
-			ImGui::NextColumn();
-			ImGui::SetNextItemWidth(-1);
-			if (display_imgui("##gamma", cam.gamma))
-				renderer.resetIterations();
-			ImGui::NextColumn();
+				auto& renderSettings = aven::getProject().getScene().renderSettings;
+				float gamma = renderSettings->gamma;
+				
+				ImGui::SetNextItemWidth(-1);
+				if (ImGui::DragFloat("##gamma", &gamma)) {
+					RenderSettings rs = *renderSettings;
+					rs.gamma = gamma;
+					aven::getProject().getScene().renderSettings = std::make_shared<RenderSettings>(rs);
+					aven::getProject().renderer.resetIterations();
+				}
+				if (ImGui::IsItemDeactivatedAfterEdit())
+					aven::getProject().history.commit();
+				ImGui::NextColumn();
+			}
 
-			ImGui::Text("maxIterations");
-			ImGui::NextColumn();
-			ImGui::SetNextItemWidth(-1);
-			if (display_imgui("##maxIterations", cam.maxSamples))
-				renderer.resetIterations();
-			ImGui::NextColumn();
 
-			ImGui::Text("nbrSamplesPerIteration");
-			ImGui::NextColumn();
-			ImGui::SetNextItemWidth(-1);
-			if (display_imgui("##nbrSamplesPerIteration", cam.nbrSamplesPerIteration))
-				renderer.resetIterations();
-			ImGui::NextColumn();
+			{
+				ImGui::Text("maxIterations");
+				ImGui::NextColumn();
 
-			ImGui::Text("nbrBounces");
-			ImGui::NextColumn();
-			ImGui::SetNextItemWidth(-1);
-			if (display_imgui("##nbrBounces", cam.nbrBounces))
-				renderer.resetIterations();
-			ImGui::NextColumn();
+				auto& renderSettings = aven::getProject().getScene().renderSettings;
+				int maxIterations = renderSettings->maxSamples;
+				
+				ImGui::SetNextItemWidth(-1);
+				if (ImGui::DragInt("##maxIterations", &maxIterations)) {
+					RenderSettings rs = *renderSettings;
+					rs.maxSamples.setValue(maxIterations);
+					aven::getProject().getScene().renderSettings = std::make_shared<RenderSettings>(rs);
+					aven::getProject().renderer.resetIterations();
+				}
+				if (ImGui::IsItemDeactivatedAfterEdit())
+					aven::getProject().history.commit();
+				ImGui::NextColumn();
+			}
 
-			ImGui::Text("background sky");
-			ImGui::NextColumn();
-			ImGui::SetNextItemWidth(-1);
-			if (ImGui::ColorEdit3("##background sky", &cam.backgroundColor_sky[0]))
-				renderer.resetIterations();
-			ImGui::NextColumn();
 
-			ImGui::Text("background ground");
-			ImGui::NextColumn();
-			ImGui::SetNextItemWidth(-1);
-			if (ImGui::ColorEdit3("##background ground", &cam.backgroundColor_ground[0]))
-				renderer.resetIterations();
-			ImGui::NextColumn();
+			{
+				ImGui::Text("samplesPerIteration");
+				ImGui::NextColumn();
+
+				auto& renderSettings = aven::getProject().getScene().renderSettings;
+				int samplesPerIteration = renderSettings->nbrSamplesPerIteration;
+				
+				ImGui::SetNextItemWidth(-1);
+				if (ImGui::DragInt("##samplesPerIteration", &samplesPerIteration)) {
+					RenderSettings rs = *renderSettings;
+					rs.nbrSamplesPerIteration = samplesPerIteration;
+					aven::getProject().getScene().renderSettings = std::make_shared<RenderSettings>(rs);
+					aven::getProject().renderer.resetIterations();
+				}
+				if (ImGui::IsItemDeactivatedAfterEdit())
+					aven::getProject().history.commit();
+				ImGui::NextColumn();
+			}
+
+
+
+			{
+				ImGui::Text("nbrBounces");
+				ImGui::NextColumn();
+
+				auto& renderSettings = aven::getProject().getScene().renderSettings;
+				int nbrBounces = renderSettings->nbrBounces;
+				
+				ImGui::SetNextItemWidth(-1);
+				if (ImGui::DragInt("##nbrBounces", &nbrBounces)) {
+					RenderSettings rs = *renderSettings;
+					rs.nbrBounces = nbrBounces;
+					aven::getProject().getScene().renderSettings = std::make_shared<RenderSettings>(rs);
+					aven::getProject().renderer.resetIterations();
+				}
+				if (ImGui::IsItemDeactivatedAfterEdit())
+					aven::getProject().history.commit();
+				ImGui::NextColumn();
+			}
+
+
+			{
+				ImGui::Text("background sky");
+				ImGui::NextColumn();
+
+				auto& renderSettings = aven::getProject().getScene().renderSettings;
+				vec3 sky = renderSettings->backgroundColor_sky;
+				
+				ImGui::SetNextItemWidth(-1);
+				if (ImGui::ColorEdit3("##background sky", &sky[0])) {
+					RenderSettings rs = *renderSettings;
+					rs.backgroundColor_sky = sky;
+					aven::getProject().getScene().renderSettings = std::make_shared<RenderSettings>(rs);
+					aven::getProject().renderer.resetIterations();
+				}
+				if (ImGui::IsItemDeactivatedAfterEdit())
+					aven::getProject().history.commit();
+				ImGui::NextColumn();
+			}
+
+			{
+				ImGui::Text("background ground");
+				ImGui::NextColumn();
+
+				auto& renderSettings = aven::getProject().getScene().renderSettings;
+				vec3 ground = renderSettings->backgroundColor_ground;
+				
+				ImGui::SetNextItemWidth(-1);
+				if (ImGui::ColorEdit3("##background ground", &ground[0])) {
+					RenderSettings rs = *renderSettings;
+					rs.backgroundColor_ground = ground;
+					aven::getProject().getScene().renderSettings = std::make_shared<RenderSettings>(rs);
+					aven::getProject().renderer.resetIterations();
+				}
+				if (ImGui::IsItemDeactivatedAfterEdit())
+					aven::getProject().history.commit();
+				ImGui::NextColumn();
+			}
+
 
 			ImGui::Columns(1);
 		}
@@ -402,7 +485,7 @@ namespace aven{
 		//Scene
 		if (ImGui::CollapsingHeader("Volume", ImGuiTreeNodeFlags_DefaultOpen)){
 			ImGui::Columns(2, nullptr, false);
-			
+
 			{
 				ImGui::Text("pos");
 				ImGui::NextColumn();
@@ -415,10 +498,10 @@ namespace aven{
 					Volume newVolume = *scene.volume.get();
 					newVolume.pos = pos;
 					scene.volume = std::make_shared<Volume>(newVolume);
-					aven::getProject().getRenderer().resetIterations();
+					aven::getProject().renderer.resetIterations();
 				}
 				if (ImGui::IsItemDeactivatedAfterEdit())
-					aven::getProject().getHistory().commit();
+					aven::getProject().history.commit();
 				ImGui::NextColumn();
 			}
 
@@ -433,10 +516,10 @@ namespace aven{
 					Volume newVolume = *scene.volume.get();
 					newVolume.stepSize = stepSize;
 					scene.volume = std::make_shared<Volume>(newVolume);
-					aven::getProject().getRenderer().resetIterations();
+					aven::getProject().renderer.resetIterations();
 				}
 				if (ImGui::IsItemDeactivatedAfterEdit())
-					aven::getProject().getHistory().commit();
+					aven::getProject().history.commit();
 				ImGui::NextColumn();
 			}	
 			
@@ -444,16 +527,16 @@ namespace aven{
 				ImGui::Text("sigma_t");
 				ImGui::NextColumn();
 				auto& scene = aven::getProject().getScene();	//previous commitHistory will change scene
-				auto sigma_a = scene.volume->sigma_t.getValue();
+				auto sigma_t = scene.volume->sigma_t.getValue();
 				ImGui::SetNextItemWidth(-1);
-				if (ImGui::DragFloat("##sigma_a", &sigma_a, 1, scene.volume->sigma_t.getMin(), scene.volume->sigma_t.getMax())) {
+				if (ImGui::DragFloat("##sigma_a", &sigma_t, 1, scene.volume->sigma_t.getMin(), scene.volume->sigma_t.getMax())) {
 					Volume newVolume = *scene.volume.get();
-					newVolume.sigma_t.setValue(sigma_a);
+					newVolume.sigma_t = sigma_t;
 					scene.volume = std::make_shared<Volume>(newVolume);
-					aven::getProject().getRenderer().resetIterations();
+					aven::getProject().renderer.resetIterations();
 				}
 				if (ImGui::IsItemDeactivatedAfterEdit())
-					aven::getProject().getHistory().commit();
+					aven::getProject().history.commit();
 				ImGui::NextColumn();
 			}
 
@@ -465,12 +548,12 @@ namespace aven{
 				ImGui::SetNextItemWidth(-1);
 				if (ImGui::DragFloat("##density", &density, 1, scene.volume->density.getMin(), scene.volume->density.getMax())) {
 					Volume newVolume = *scene.volume.get();
-					newVolume.density.setValue(density);
+					newVolume.density = density;
 					scene.volume = std::make_shared<Volume>(newVolume);
-					aven::getProject().getRenderer().resetIterations();
+					aven::getProject().renderer.resetIterations();
 				}
 				if (ImGui::IsItemDeactivatedAfterEdit())
-					aven::getProject().getHistory().commit();
+					aven::getProject().history.commit();
 				ImGui::NextColumn();
 			}
 
@@ -484,8 +567,8 @@ namespace aven{
 					Volume newVolume = *scene.volume.get();
 					newVolume.renderingMode_Hybrid = renderingMode_Hybrid;
 					scene.volume = std::make_shared<Volume>(newVolume);
-					aven::getProject().getRenderer().resetIterations();
-					aven::getProject().getHistory().commit();
+					aven::getProject().renderer.resetIterations();
+					aven::getProject().history.commit();
 				}
 				ImGui::NextColumn();
 			}
@@ -499,8 +582,8 @@ namespace aven{
 					Volume newVolume = *scene.volume.get();
 					newVolume.isRendering_BondingBox = renderingBoundingBox;
 					scene.volume = std::make_shared<Volume>(newVolume);
-					aven::getProject().getRenderer().resetIterations();
-					aven::getProject().getHistory().commit();
+					aven::getProject().renderer.resetIterations();
+					aven::getProject().history.commit();
 				}	
 				ImGui::NextColumn();
 			}
@@ -623,7 +706,8 @@ namespace aven{
 		if (ImGui::BeginPopupModal("Create New Project")) {
 			assert(aven::getProject().getCurrentOperation() == aven::Project::Operation::None);
 
-			static aven::clamped<ivec3, 1, 256> size = ivec3( 128, 128, 128);
+			static c_ivec3<1, Volume::MAX_VOLUME_LENGTH> size = ivec3( 128, 128, 128);
+			display_imgui("size", size);
 
 			//cancel Button
 			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0, 0.7f, 0.7f));
@@ -677,7 +761,7 @@ namespace aven{
 												default: assert(false);	// falls through
 												case Project::Operation::None:		return "default";
 												}}},
-				{.name = "History: nbr undos",		.f = []() {	return std::to_string(aven::getProject().getHistory().getUndoCount()); }},
+				{.name = "History: nbr undos",		.f = []() {	return std::to_string(aven::getProject().history.getUndoCount()); }},
 				{.name="BrickPool: nrbFreeBricks",	.f= []() {	return std::to_string(brickPool::nbrFreeBricks()); }},
 				{.name = "BrickPool: capacity",		.f = []() {	return std::to_string(brickPool::CAPACITY); }},
 		};

@@ -1,23 +1,24 @@
 #pragma once
 
 #include <aven/objects/Scene.h>
+#include <aven/objects/ViewPortCamera.h>
 #include <aven/render/Renderer.h>
 #include <aven/util/History.h>
 #include <aven/volumeOperations/Filter.h>
 #include <aven/volumeOperations/OperationTool.h>
+#include <expected>
+
 
 namespace aven {
 
 	class Project {
 	public:
-		Project(clamped<ivec3, 1, 256> const size);
-		Project(clamped<ivec3, 1, 256> const size, Scene &&);
+		Project(c_ivec3<1, Volume::MAX_VOLUME_LENGTH> const size);
+		Project(ViewPortCamera&& cam, Scene&&);
 
 		static void saveToDisk(std::string const& filename, Project const&);
-		static Project loadFromDisk(std::string const& filename);
+		static std::expected<Project, std::string> loadFromDisk(std::string const& filename);
 		
-		Renderer&		getRenderer();
-		History<Scene>& getHistory();
 		Scene&			getScene() ;
 
 		// operations, state machine
@@ -37,10 +38,13 @@ namespace aven {
 		std::unique_ptr<OperationTool> currentToolOperation { nullptr };
 
 		Operation	operation	= Operation::None;
-	private:
+
+	public:
+		ViewPortCamera camera;
 		Renderer renderer;
 		History<Scene> history;
 
+	private:
 		//current operation
 		Filter*		op_filter	= nullptr;	// points to filter in case operation = Filter, otherwise nullptr	
 	};

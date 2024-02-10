@@ -4,38 +4,74 @@
 
 namespace aven {
 
-	Project::Project(clamped<ivec3, 1, 256> const size)
-		:history(Scene(size)), 
-		renderer(std::max(size.getValue().x, std::max(size.getValue().y,size.getValue().z)/2 + 100))
+	Project::Project(c_ivec3<1, Volume::MAX_VOLUME_LENGTH> const size)
+		:history(Scene(size)),
+		camera(vec3(0, 0, std::max(size.getValue().x, std::max(size.getValue().y,size.getValue().z)/2 + 100)), vec3(0, 0, 0), 90.0f)
 	{
-	
+		//...
 	}
 
-	Project::Project(clamped<ivec3, 1, 256> const size, Scene&& scene) 
+	Project::Project(ViewPortCamera&& camera, Scene&& scene) 
 		:history(std::move(scene)),
-		renderer(std::max(size.getValue().x, std::max(size.getValue().y, size.getValue().z) / 2 + 100))
+		camera(std::move(camera))
 	{
-			
+		//...	
 	}
 	
 
 	void Project::saveToDisk(std::string const& filename, Project const& project) {
 		std::ofstream out(filename, std::ios_base::binary);
-		if (!out)
+		if (!out.is_open())
 			throw std::runtime_error("could not open file stream \"" + filename + "\"");
-		
+
+		// magic number
+		char magic[] = "aven volume";
+		out.write((char*) &magic[0], sizeof(magic));
+
+		// version
+		int version = 0;
+		out.write((char*)&version, sizeof(version));
+
+		// camera 
+		ViewPortCamera::serialize(out, project.camera);
+
+		// Scene
 		auto scene = project.history.getCurrent();
 		Scene::serialize(out, scene);
 	}
 
 
-	Project Project::loadFromDisk(std::string const& filename) {
+	std::expected<Project, std::string> Project::loadFromDisk(std::string const& filename) {
 		std::ifstream in(filename, std::ios_base::binary);
-		if (!in)
-			throw std::runtime_error("could not open file stream \"" + filename + "\"");
+		if (!in.is_open())
+			return std::unexpected("could not open file stream \"" + filename + "\"");
 
-		Scene scene = Scene::deserialize(in);
-		return Project(scene.volume->getSize(), std::move(scene));
+		const std::string error = "error occured while deserializing Project.";
+
+		// magic number
+		char magic[] = "aven volume";
+		char idIn[sizeof(magic)];
+		if (!in.read(idIn, sizeof(idIn)))
+			return std::unexpected(error);
+		if (strcmp(magic, idIn) != 0)
+			return std::unexpected("Could not find file identifier \"aven volume\" at start of file.");
+
+		// version
+		int version;
+		if (!in.read((char*)&version, sizeof(version)))
+			return std::unexpected(error);
+		if (version != 0)
+			return std::unexpected("File version not supported");
+		
+		auto cam = ViewPortCamera::deserialize(in);
+		if (!cam.has_value())
+			return std::unexpected(cam.error());
+
+		auto scene = Scene::deserialize(in);
+		if (!scene.has_value())
+			return std::unexpected(scene.error());
+
+		return Project(std::move(cam.value()), std::move(scene.value()));
 	}
 
 
@@ -72,7 +108,7 @@ namespace aven {
 		}
 
 		operation = Operation::None;
-		getHistory().commit();
+		history.commit();
 	}
 
 
@@ -158,8 +194,8 @@ namespace aven {
 	} 
 
 
-	Renderer&		Project::getRenderer()	{ return renderer; }
-	History<Scene>& Project::getHistory()	{ return history; }
-	Scene&			Project::getScene()		{ return history.getCurrent(); }
+	Scene& Project::getScene()	{
+		return history.getCurrent(); 
+	}
 
 }

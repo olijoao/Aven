@@ -4,6 +4,8 @@
 #include <aven/GL/ShaderLoader.h>
 #include <aven/objects/BrickPool.h>
 #include <memory>
+#include <stdexcept>
+
 
 namespace aven {
 	namespace {
@@ -39,7 +41,11 @@ namespace aven {
 
 
 	brickPool::AllocatedBricks brickPool::alloc_cpu_bulk(unsigned int count)	{
-		assert(count <= nbrFreeBricks());
+		if (count == 0)
+			return brickPool::AllocatedBricks({});
+		if (count > nbrFreeBricks())
+			throw std::runtime_error("brickPool out of memory.");
+
 		gl::SSBO ssbo(count * 4);
 		program_transphere->setUint("count", count);
 		program_transphere->setUint("isAllocating", 1);

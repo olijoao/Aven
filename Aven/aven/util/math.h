@@ -81,30 +81,29 @@ public:
 
 	T& operator[](uint8_t i) { assert(i >= 0 && i < 2); if (i == 0) return x; return y; }
 
-	bool operator ==(const Vector2<T>& b)		const { return   x == b.x && y == b.y; }
-	bool operator !=(const Vector2<T>& b)		const { return !(x == b.x && y == b.y); }
+	bool operator ==(const Vector2<T>& b)		const	{ return   x == b.x && y == b.y; }
+	bool operator !=(const Vector2<T>& b)		const	{ return !(x == b.x && y == b.y); }
 
-	Vector2<T>  operator-()						const { return Vector2<T>(-x, -y); }
-	Vector2<T>  operator+()						const { return Vector2<T>(+x, +y); }
+	Vector2<T>  operator-()						const	{ return Vector2<T>(-x, -y); }
+	Vector2<T>  operator+()						const	{ return Vector2<T>(+x, +y); }
 
 	Vector2<T>  operator+ (Vector2<T> const& v) const	{ return Vector2<T>(x + v.x, y + v.y); }
 	Vector2<T>& operator+=(Vector2<T> const& v)			{ x += v.x; y += v.y; return *this; }
 
-	Vector2<T>  operator- (Vector2<T> const& v) const { return Vector2(x - v.x, y - v.y); }
-	Vector2<T>& operator-=(Vector2<T> const& v) { x -= v.x; y -= v.y; return *this; }
+	Vector2<T>  operator- (Vector2<T> const& v) const	{ return Vector2(x - v.x, y - v.y); }
+	Vector2<T>& operator-=(Vector2<T> const& v)			{ x -= v.x; y -= v.y; return *this; }
 
-	Vector2<T>  operator* (Vector2<T> const& v)	const { return Vector2<T>(x * v.x, y * v.y); }
-	Vector2<T>  operator* (T s)					const { return Vector2<T>(s * x, s * y); }
-	Vector2<T>& operator*=(T s) { x *= s; y *= s; return *this; }
+	Vector2<T>  operator* (Vector2<T> const& v)	const	{ return Vector2<T>(x * v.x, y * v.y); }
+	Vector2<T>  operator* (T s)					const	{ return Vector2<T>(s * x, s * y); }
+	Vector2<T>& operator*=(T s)							{ x *= s; y *= s; return *this; }
 
-	Vector2<T>  operator/ (T f)					const { float inv = 1.0f / f; return Vector2<T>(x * inv, y * inv); }
-	Vector2<T>& operator/=(T f) { float inv = 1.0f / f; x *= inv; y *= inv; return *this; }
-	Vector2<T>  operator/ (Vector2<T> v)		const { return Vector2<T>(x / v.x, y / v.y); }
-	Vector2<T>& operator/=(Vector2<T> v) { x /= v.x; y /= v.y; return *this; }
-
-	float lengthSquared()						const { return x * x + y * y; }
-	float length()								const { return std::sqrt(lengthSquared()); }
-	bool  hasNaNs()								const { return std::isnan(x) || std::isnan(y); }
+	Vector2<T>  operator/ (T f)					const	{ float inv = 1.0f / f; return Vector2<T>(x * inv, y * inv); }
+	Vector2<T>& operator/=(T f)							{ float inv = 1.0f / f; x *= inv; y *= inv; return *this; }
+	Vector2<T>  operator/ (Vector2<T> v)		const	{ return Vector2<T>(x / v.x, y / v.y); }
+	Vector2<T>& operator/=(Vector2<T> v)				{ x /= v.x; y /= v.y; return *this; }
+	float lengthSquared()						const	{ return x * x + y * y; }
+	float length()								const	{ return std::sqrt(lengthSquared()); }
+	bool  hasNaNs()								const	{ return std::isnan(x) || std::isnan(y); }
 };
 
 
@@ -203,30 +202,30 @@ public:
 
 	T& operator[](uint8_t i) { assert(i >= 0 && i < 3); if (i == 0) return x; if (i == 1) return y; return z; }
 
-	bool operator ==(const Vector3<T>& b)		const { return   x == b.x && y == b.y && z == b.z; }
-	bool operator !=(const Vector3<T>& b)		const { return !(x == b.x && y == b.y && z == b.z); }
+	bool operator ==(const Vector3<T>& b)		const	{ return   x == b.x && y == b.y && z == b.z; }
+	bool operator !=(const Vector3<T>& b)		const	{ return !(x == b.x && y == b.y && z == b.z); }
 
-	Vector3<T>  operator-()						const { return Vector3<T>(-x, -y, -z); }
-	Vector3<T>  operator+()						const { return Vector3<T>(+x, +y, +z); }
+	Vector3<T>  operator-()						const	{ return Vector3<T>(-x, -y, -z); }
+	Vector3<T>  operator+()						const	{ return Vector3<T>(+x, +y, +z); }
 
-	Vector3<T>  operator+ (Vector3<T> const& v) const { return Vector3(x + v.x, y + v.y, z + v.z); }
-	Vector3<T>& operator+=(Vector3<T> const& v) { x += v.x; y += v.y; z += v.z; return *this; }
+	Vector3<T>  operator+ (Vector3<T> const& v) const	{ return Vector3(x + v.x, y + v.y, z + v.z); }
+	Vector3<T>& operator+=(Vector3<T> const& v)			{ x += v.x; y += v.y; z += v.z; return *this; }
 
-	Vector3<T>  operator- (Vector3<T> const& v) const { return Vector3(x - v.x, y - v.y, z - v.z); }
-	Vector3<T>& operator-=(Vector3<T> const& v) { x -= v.x; y -= v.y; z -= v.z; return *this; }
+	Vector3<T>  operator- (Vector3<T> const& v) const	{ return Vector3(x - v.x, y - v.y, z - v.z); }
+	Vector3<T>& operator-=(Vector3<T> const& v)			{ x -= v.x; y -= v.y; z -= v.z; return *this; }
 
-	Vector3<T>  operator* (Vector3<T> const& v)	const { return Vector3<T>(x * v.x, y * v.y, z * v.z); }
-	Vector3<T>  operator* (T s)					const { return Vector3<T>(s * x, s * y, s * z); }
-	Vector3<T>& operator*=(T s) { x *= s; y *= s; z *= s; return *this; }
+	Vector3<T>  operator* (Vector3<T> const& v)	const	{ return Vector3<T>(x * v.x, y * v.y, z * v.z); }
+	Vector3<T>  operator* (T s)					const	{ return Vector3<T>(s * x, s * y, s * z); }
+	Vector3<T>& operator*=(T s)							{ x *= s; y *= s; z *= s; return *this; }
 
-	Vector3<T>  operator/ (T f)					const { float inv = 1.0f / f; return Vector3<T>(x * inv, y * inv, z * inv); }
-	Vector3<T>& operator/=(T f) { float inv = 1.0f / f; x *= inv; y *= inv; z *= inv; return *this; }
-	Vector3<T>  operator/ (Vector3<T> v)		const { return Vector3<T>(x / v.x, y / v.y, z / v.z); }
-	Vector3<T>& operator/=(Vector3<T> v) { x /= v.x; y /= v.y;  z /= v.z; return *this; }
+	Vector3<T>  operator/ (T f)					const	{ float inv = 1.0f / f; return Vector3<T>(x * inv, y * inv, z * inv); }
+	Vector3<T>& operator/=(T f)							{ float inv = 1.0f / f; x *= inv; y *= inv; z *= inv; return *this; }
+	Vector3<T>  operator/ (Vector3<T> v)		const	{ return Vector3<T>(x / v.x, y / v.y, z / v.z); }
+	Vector3<T>& operator/=(Vector3<T> v)				{ x /= v.x; y /= v.y;  z /= v.z; return *this; }
 
-	float lengthSquared()						const { return x * x + y * y + z * z; }
-	float length()								const { return std::sqrt(lengthSquared()); }
-	bool  hasNaNs()								const { return std::isnan(x) || std::isnan(y) || std::isnan(z); }
+	float lengthSquared()						const	{ return x * x + y * y + z * z; }
+	float length()								const	{ return std::sqrt(lengthSquared()); }
+	bool  hasNaNs()								const	{ return std::isnan(x) || std::isnan(y) || std::isnan(z); }
 };
 
 
@@ -337,30 +336,30 @@ public:
 
 	T& operator[](uint8_t i) { assert(i >= 0 && i < 4); if (i == 0) return x; if (i == 1) return y; if (i == 2) return z; return w; }
 
-	bool operator ==(const Vector4<T>& b)		const { return   x == b.x && y == b.y && z == b.z && w == b.w; }
-	bool operator !=(const Vector4<T>& b)		const { return !(x == b.x && y == b.y && z == b.z && w == b.w); }
+	bool operator ==(const Vector4<T>& b)		const	{ return   x == b.x && y == b.y && z == b.z && w == b.w; }
+	bool operator !=(const Vector4<T>& b)		const	 { return !(x == b.x && y == b.y && z == b.z && w == b.w); }
 
-	Vector4<T>  operator-()						const { return Vector4<T>(-x, -y, -z, -w); }
-	Vector4<T>  operator+()						const { return Vector4<T>(+x, +y, +z, +w); }
+	Vector4<T>  operator-()						const	{ return Vector4<T>(-x, -y, -z, -w); }
+	Vector4<T>  operator+()						const	{ return Vector4<T>(+x, +y, +z, +w); }
 
-	Vector4<T>  operator+ (Vector4<T> const& v) const { return Vector4(x + v.x, y + v.y, z + v.z, w + v.w); }
-	Vector4<T>& operator+=(Vector4<T> const& v) { x += v.x; y += v.y; z += v.z; w += v.w; return *this; }
+	Vector4<T>  operator+ (Vector4<T> const& v) const	{ return Vector4(x + v.x, y + v.y, z + v.z, w + v.w); }
+	Vector4<T>& operator+=(Vector4<T> const& v)			{ x += v.x; y += v.y; z += v.z; w += v.w; return *this; }
 
-	Vector4<T>  operator- (Vector4<T> const& v) const { return Vector4(x - v.x, y - v.y, z - v.z, w - v.w); }
-	Vector4<T>& operator-=(Vector4<T> const& v) { x -= v.x; y -= v.y; z -= v.z; w -= v.w; return *this; }
+	Vector4<T>  operator- (Vector4<T> const& v) const	{ return Vector4(x - v.x, y - v.y, z - v.z, w - v.w); }
+	Vector4<T>& operator-=(Vector4<T> const& v)			{ x -= v.x; y -= v.y; z -= v.z; w -= v.w; return *this; }
 
-	Vector4<T>  operator* (T s)					const { return Vector4<T>(s * x, s * y, s * z, s * w); }
-	Vector4<T>& operator*=(T s) { x *= s; y *= s; z *= s; w *= s; return *this; }
-	Vector4<T>  operator* (Vector4<T> const& v)	const { return Vector4<T>(x * v.x, y * v.y, z * v.z, w * v.w); }
+	Vector4<T>  operator* (T s)					const	{ return Vector4<T>(s * x, s * y, s * z, s * w); }
+	Vector4<T>& operator*=(T s)							{ x *= s; y *= s; z *= s; w *= s; return *this; }
+	Vector4<T>  operator* (Vector4<T> const& v)	const	{ return Vector4<T>(x * v.x, y * v.y, z * v.z, w * v.w); }
 
-	Vector4<T>  operator/ (T f)					const { float inv = 1.0f / f; return Vector4<T>(x * inv, y * inv, z * inv, w * inv); }
-	Vector4<T>& operator/=(T f) { float inv = 1.0f / f; x *= inv; y *= inv; z *= inv; w *= inv; return *this; }
-	Vector4<T>  operator/ (Vector4<T> v)		const { return Vector4<T>(x / v.x, y / v.y, z / v.z, w / v.w); }
-	Vector4<T>& operator/=(Vector4<T> v) { x /= v.x; y /= v.y; z /= v.z; w /= v.w; return *this; }
+	Vector4<T>  operator/ (T f)					const	{ float inv = 1.0f / f; return Vector4<T>(x * inv, y * inv, z * inv, w * inv); }
+	Vector4<T>& operator/=(T f)							{ float inv = 1.0f / f; x *= inv; y *= inv; z *= inv; w *= inv; return *this; }
+	Vector4<T>  operator/ (Vector4<T> v)		const	{ return Vector4<T>(x / v.x, y / v.y, z / v.z, w / v.w); }
+	Vector4<T>& operator/=(Vector4<T> v)				{ x /= v.x; y /= v.y; z /= v.z; w /= v.w; return *this; }
 
-	float lengthSquared()						const { return x * x + y * y + z * z + w * w; }
-	float length()								const { return std::sqrt(lengthSquared()); }
-	bool  hasNaNs()								const { return std::isnan(x) || std::isnan(y) || std::isnan(z) || std::isnan(w); }
+	float lengthSquared()						const	{ return x * x + y * y + z * z + w * w; }
+	float length()								const	{ return std::sqrt(lengthSquared()); }
+	bool  hasNaNs()								const	{ return std::isnan(x) || std::isnan(y) || std::isnan(z) || std::isnan(w); }
 };
 
 

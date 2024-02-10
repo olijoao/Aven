@@ -28,7 +28,7 @@ int main() {
 		try {
 			aven::gui::display();
 
-			if (aven::getProject().getRenderer().hasReachedFinalIteration()) {
+			if (aven::getProject().renderer.hasReachedFinalIteration()) {
 				while (glfwGetTime() < lastTime + 1.0/30.0) {
 					std::this_thread::sleep_for(1ms);
 				}

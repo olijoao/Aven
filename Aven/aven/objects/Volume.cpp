@@ -5,15 +5,13 @@
 #include <aven/volumeOperations/VolumeOps.h>
 #include <vector>
 
-
-
 namespace aven {
 
-	Volume::Volume(	ivec3 size, 
+	Volume::Volume(	c_ivec3<1, MAX_VOLUME_LENGTH>size, 
 					vec3 pos,
-					clamped<float, 0.001f, 100000.0f>	sigma_t,
-					clamped<float, 0.001f, 100000.0f>	density,
-					clamped<float, 0.25f, 5.0f>			stepSize,
+					c_float<0.001f, 100000.0f>	sigma_t,
+					c_float<0.001f, 100000.0f>	density,
+					c_float<0.25f, 5.0f>		stepSize,
 					bool isRenderingBoundingBox,
 					bool renderingMode_Hybrid, 
 					std::shared_ptr<VolumeData> volumeData):
@@ -32,12 +30,15 @@ namespace aven {
 
 
 	void Volume::serialize(std::ofstream& out, Volume const& volume) {
+		int version = 1;
+		out.write((char*) &version,	sizeof(version));
+	
 		auto size = volume.getSize();
-		out.write((char *) &size, sizeof(ivec3));
-		out.write((char *) &volume.pos, sizeof(vec3));
-		out.write((char *) &volume.stepSize.getValue(), sizeof(float));
-		out.write((char *) &volume.sigma_t.getValue(), sizeof(float));
-		out.write((char *) &volume.density.getValue(), sizeof(float)); 
+		out.write((char *) &size, sizeof(size));
+		out.write((char *) &volume.pos, sizeof(volume.pos));
+		out.write((char *) &volume.stepSize, sizeof(volume.stepSize));
+		out.write((char *) &volume.sigma_t, sizeof(volume.sigma_t));
+		out.write((char *) &volume.density, sizeof(volume.density)); 
 		out.put(volume.isRendering_BondingBox ? 1 : 0);
 		out.put(volume.renderingMode_Hybrid ? 1 : 0);
 
@@ -69,52 +70,64 @@ namespace aven {
 
 
 
-	Volume Volume::deserialize(std::ifstream& in) {
+	std::expected<Volume, std::string> Volume::deserialize(std::ifstream& in) {
+
+		int version;
 		ivec3 size;
-		in.read((char*)&size, sizeof(ivec3));
-
 		vec3 pos;
-		in.read((char*)&pos, sizeof(vec3));
-	
-		float stepSize;
-		in.read((char*)&stepSize, sizeof(float));
+		float stepSize, sigma_t, density;
+		bool isRendering_BoundingBox, isRenderingMode_Hybrid;  
 
-		float sigma_t;	
-		in.read((char*)&sigma_t, sizeof(float));
+		if (   !in.read((char*)&version, sizeof(version))
+			|| !in.read((char*)&size, sizeof(size))
+			|| !in.read((char*)&pos, sizeof(pos))
+			|| !in.read((char*)&stepSize, sizeof(stepSize))
+			|| !in.read((char*)&sigma_t, sizeof(sigma_t))
+			|| !in.read((char*)&density, sizeof(density)) 
+			|| !in.read((char*)&isRendering_BoundingBox, sizeof(isRendering_BoundingBox))
+			|| !in.read((char*)&isRenderingMode_Hybrid, sizeof(isRenderingMode_Hybrid)))
+		{
+			return std::unexpected("error occured while deserializing Volume.");
+		}
+
+		if (any(greaterThan(size, ivec3(Volume::MAX_VOLUME_LENGTH)))) 
+			return std::unexpected("error occured while deserializing Volume. Volume size too big.");
+
+		if(version != 1)
+			return std::unexpected("error occured while deserializing Volume. Version must be 1.");
 		
-		float density;
-		in.read((char*)&density, sizeof(float));
-	
-		bool isRendering_BoundingBox = in.get();
-		bool isRenderingMode_Hybrid = in.get();
-
+		// load in brick pointers 
 		std::vector<uint32_t> data_volumeBricks;
-
 		ivec3 sizeInBricks = (size + brickPool::BRICK_LENGTH-1) / brickPool::BRICK_LENGTH;
 		auto nbrBricks = sizeInBricks.x * sizeInBricks.y * sizeInBricks.z;
-		data_volumeBricks.reserve(nbrBricks);
-		for (int i = 0; i < nbrBricks; i++) {
-			uint32_t brick;
-			in.read((char*)&brick, sizeof(uint32_t));
-			data_volumeBricks.push_back(brick);
+		data_volumeBricks.resize(nbrBricks);
+		if(!in.read((char*)&data_volumeBricks[0], nbrBricks * sizeof(uint32_t))) {
+			return std::unexpected("error occured while deserializing Volume. Failure to read bricks pointers.");
 		}
 		
 		unsigned int brickCount;
-		in.read((char*)&brickCount, sizeof(brickCount));
-	
-		brickPool::AllocatedBricks allocatedBricks = brickPool::alloc_cpu_bulk(brickCount);	
-		for (int i = 0; i < nbrBricks; i++) {
-			if (data_volumeBricks[i] == brickPool::BRICK_NULL) 
-				continue;
-					
-			std::array<uint32_t, brickPool::BRICK_SIZE_IN_4BYTES> data;
-			in.read((char*)&data[0], sizeof(data));
-			uint32_t brickIndex = allocatedBricks.pop();
-			brickPool::setBrickData(brickIndex, data);
-			data_volumeBricks[i] = brickIndex;	//carefull, I am changing what I am iterating over
-		}
+		if(!in.read((char*)&brickCount, sizeof(brickCount)))
+			return std::unexpected("error occured while deserializing Volume.");
+		if(brickCount > nbrBricks)
+			return std::unexpected("error occured while deserializing Volume. Given brickCount higher than volume size.");
 
-		assert(allocatedBricks.size() == 0);
+		if (brickCount > 0) {
+			brickPool::AllocatedBricks allocatedBricks = brickPool::alloc_cpu_bulk(brickCount);	
+			for (int i = 0; i < nbrBricks; i++) {
+				if (data_volumeBricks[i] == brickPool::BRICK_NULL) 
+					continue;
+						
+				std::array<uint32_t, brickPool::BRICK_SIZE_IN_4BYTES> data;
+				if(!in.read((char*)&data[0], sizeof(data)))
+					return std::unexpected("error occured while deserializing Volume.");
+
+				uint32_t brickIndex = allocatedBricks.pop();
+				brickPool::setBrickData(brickIndex, data);
+				data_volumeBricks[i] = brickIndex;	//carefull, I am changing what I am iterating over
+			}
+			if(allocatedBricks.size() > 0)
+				return std::unexpected("error occured while deserializing Volume.");
+		}
 
 		VolumeData volumeData(size);
 		volumeData.getSSBO().setData(&data_volumeBricks[0], nbrBricks * 4);
