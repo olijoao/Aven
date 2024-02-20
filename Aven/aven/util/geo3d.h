@@ -4,6 +4,7 @@
 #include <optional>
 
 namespace aven {
+
 	class Ray {
 	public:
 		Ray(vec3 pos, vec3 dir) 
@@ -15,7 +16,8 @@ namespace aven {
 		vec3 pos, dir;
 	};
 
-		template <typename T>
+
+	template <typename T>
 	class AABB {
 	public:
 		AABB(Vector3<T> min, Vector3<T> max)

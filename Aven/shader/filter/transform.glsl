@@ -1,7 +1,7 @@
 #version 460 core
 
 #define FILTER_DEFORM
-#pragma include "shader/lib/filter_main.glsl"
+#include "shader/lib/filter_main.glsl"
 
 uniform vec3 scale;
 uniform ivec3 translate;

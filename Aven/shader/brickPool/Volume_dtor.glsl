@@ -1,6 +1,6 @@
 #version 460 core
 
-#pragma include "shader/lib/volume.glsl"
+#include "shader/lib/volume.glsl"
 
 uniform uint nbrBricks;
 

@@ -1,7 +1,7 @@
 #version 460 core
 #define FILTER_RENDER
-#pragma include "shader/lib/filter_main.glsl"
-#pragma include "shader/lib/sample.glsl"
+#include "shader/lib/filter_main.glsl"
+#include "shader/lib/sample.glsl"
 
 
 vec4 filter_render(ivec3 pos) {

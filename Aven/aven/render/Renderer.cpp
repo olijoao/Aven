@@ -10,12 +10,10 @@ namespace aven{
 	Renderer::Renderer():
 		framebuffer_renderer(uvec2(32, 32)),
 		framebuffer_result(uvec2(32, 32)),
-		program_render(gl::loadProgram({	
-									{ gl::ShaderType::Vertex,	"shader/render/renderer_vert.glsl"}, 
-									{ gl::ShaderType::Fragment,	"shader/render/renderer_frag.glsl" }})),
-		program_tonemap(gl::loadProgram({	
-									{ gl::ShaderType::Vertex,	"shader/render/tonemap_vert.glsl"}, 
-									{ gl::ShaderType::Fragment,	"shader/render/tonemap_frag.glsl" }})),
+		program_render(gl::loadProgram({	{ gl::ShaderType::Vertex,	"shader/render/renderer_vert.glsl"}, 
+											{ gl::ShaderType::Fragment,	"shader/render/renderer_frag.glsl" }})),
+		program_tonemap(gl::loadProgram({	{ gl::ShaderType::Vertex,	"shader/render/tonemap_vert.glsl"}, 
+											{ gl::ShaderType::Fragment,	"shader/render/tonemap_frag.glsl" }})),
 
 		vao(std::initializer_list<vec3>({	vec3(1.0f, 1.0f, 0.0f),
 											vec3(-1.0f, -1.0f, 0.0f),
@@ -115,22 +113,35 @@ namespace aven{
 		program_render.setVec3("camera.right",						std::get<0>(coordSystem));
 		program_render.setVec3("camera.up",							std::get<1>(coordSystem));
 		program_render.setVec3("camera.forward",					std::get<2>(coordSystem));
-		program_render.setVec3("camera.color_background_sky",		rs->backgroundColor_sky);
-		program_render.setVec3("camera.color_background_ground",	rs->backgroundColor_ground);
-		program_render.setInt("camera.nbrSamplesPerIteration",		rs->nbrSamplesPerIteration);
-		program_render.setInt("camera.nbrBounces",					rs->nbrBounces);
+		program_render.setInt("nbrSamplesPerIteration",				rs->nbrSamplesPerIteration);
 
-		auto volume = aven::getProject().getScene().volume;
+
 		//volume.glsl
+		auto volume = aven::getProject().getScene().volume;
 		program_render.setInt3("volume_size",					volume->getSize());
-
 		program_render.setVec3("invVolumeSize",					vec3(1.0f) / vec3(volume->getSize()));
 		program_render.setFloat("volume_stepSize",				volume->stepSize);
-		program_render.setFloat("volume_sigma_t",				volume->sigma_t);
 		program_render.setFloat("volume_density",				volume->density);
-		program_render.setVec3("volume_pos",					volume->pos);
+		program_render.setVec3("volume_pos",					volume->transformation.getPos());
 		program_render.setInt("volune_isDisplayingBoundingBox",	volume->isRendering_BondingBox?1:0);
 		program_render.setInt("volume_renderModeHybrid",		volume->renderingMode_Hybrid?1:0);
+
+		//lights
+		auto& lights = aven::getProject().getScene().getLights();
+		program_render.setInt("nbrOfLights", lights.size());
+		for (int i = 0; i < lights.size(); i++) {
+			std::string s_i = std::to_string(i);
+			program_render.setMat4x4("lights[" + s_i + "].transformation",			lights[i]->transformation.getMatrix());
+			program_render.setVec3("lights[" + s_i + "].color",						lights[i]->color.getValue() * lights[i]->intensity);
+			program_render.setInt("lights[" + s_i + "].type",						static_cast<int>(lights[i]->type));
+			program_render.setFloat("lights[" + s_i  + "].falloff_inCosRadians",	std::cos(toRadians(lights[i]->falloff_angle_degrees)));
+		}
+
+		program_render.setVec3("background_sky",		rs->backgroundColor_sky);
+		program_render.setVec3("background_ground",		rs->backgroundColor_ground);
+		program_render.setInt("background_useAsLight",	rs->useBackgroundAsLight ? 1 : 0);
+		program_render.setFloat("background_intensity", rs->backgroundIntensity);
+			
 
 		brickPool::bindSSBO_toBufferBase0();
 		auto& op= aven::getProject().currentToolOperation;
@@ -147,3 +158,6 @@ namespace aven{
 	}
 
 }
+
+
+

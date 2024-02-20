@@ -259,7 +259,6 @@ namespace gl {
 		auto it = cached_uniformLocations.find(uniformName);
 		if (it != cached_uniformLocations.end())
 			return it->second;
-
 		return -1;
 	}
 

@@ -1,8 +1,8 @@
 #ifndef CAMERA_GLSL
 #define CAMERA_GLSL
 
-#pragma include "shader/lib/geometry.glsl"
-#pragma include "shader/lib/sample.glsl"
+#include "shader/lib/geometry.glsl"
+#include "shader/lib/sample.glsl"
 
 
 //camera
@@ -12,11 +12,7 @@ struct Camera {
     vec3 right;     // magnitude == width/2  of ImagePlane
     vec3 up;        // magnitude == height/2 of ImagePlane
     vec3 forward;   // normalized ! imagePlane is 1 unit away from camera.pos
-    vec3 color_background_sky;
-    vec3 color_background_ground;
-    int nbrBounces;
-    int nbrSamplesPerIteration;
-};
+ };
 
 
 

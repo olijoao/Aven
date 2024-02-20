@@ -52,5 +52,4 @@ namespace aven {
 
 	template<vec3 MIN, vec3 MAX>	
 	using c_vec3 = clamped<vec3, MIN, MAX>;
-	
 }

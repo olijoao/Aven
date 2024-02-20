@@ -1,12 +1,15 @@
 #version 460 core
 
-#pragma include "shader/lib/blend.glsl"
-#pragma include "shader/lib/camera.glsl"
-#pragma include "shader/lib/geometry.glsl"
-#pragma include "shader/lib/math.glsl"
-#pragma include "shader/lib/sample.glsl"
-#pragma include "shader/lib/shade.glsl"
-#pragma include "shader/lib/volume.glsl"
+#include "shader/lib/blend.glsl"
+#include "shader/lib/camera.glsl"
+#include "shader/lib/geometry.glsl"
+#include "shader/lib/math.glsl"
+#include "shader/lib/sample.glsl"
+#include "shader/lib/shade.glsl"
+#include "shader/lib/volume.glsl"
+
+
+const int MAX_NUMBER_LIGHTS             = 5;     // don't forget to change in scene.h as well
 
 const int VOLUME_TYPE_DEFAULT           = 0;
 const int VOLUME_TYPE_BLENDED_NORMAL    = 1;
@@ -22,11 +25,11 @@ uniform Camera      camera;
 uniform vec2        rand_seed;
 uniform sampler2D	textureTarget;
 uniform uint        renderIteration;
+uniform int         nbrSamplesPerIteration;
 
 // volume
 uniform int         volume_type;
 uniform vec3        volume_pos;
-uniform float       volume_sigma_t;
 uniform float       volume_density;
 uniform float       volume_opacity;     //used with VOLUME_TYPE_BLENDED
 uniform int         volune_isDisplayingBoundingBox;
@@ -34,6 +37,25 @@ uniform int         volume_renderModeHybrid;
 uniform float       volume_stepSize;
 uniform vec3        invVolumeSize;
 
+
+// lights
+const int LIGHT_TYPE_DIRECTION  = 0;
+const int LIGHT_TYPE_POINT      = 1;
+const int LIGHT_TYPE_SPOTLIGHT  = 2;
+
+struct	Light{
+    mat4 transformation;
+    int type;
+    vec3 color;
+    float falloff_inCosRadians;
+};
+
+uniform int     nbrOfLights;
+uniform Light   lights[MAX_NUMBER_LIGHTS];
+uniform vec3    background_sky;
+uniform vec3    background_ground;
+uniform float   background_intensity;
+uniform int     background_useAsLight;
 
 
 vec4 getVoxelAt(vec3 pos) {
@@ -97,13 +119,45 @@ vec3 worldToVolume(vec3 posWorld, vec3 posVolume, vec3 scale) {
 }
 
 
+vec3 sky_color(vec3 dir) {
+    float t = 0.5 * (-dir.y + 1.0);
+    return mix(background_sky, background_ground, t);
+}
 
-Hit intersectWorld(Ray ray, int iteration) {
-    //sky
-    float t = 0.5 * (-ray.dir.y + 1.0);
-    vec3 skycolor = mix(camera.color_background_sky, camera.color_background_ground, t);
-    
+float filteredGrid( in vec2 p, in vec2 dpdx, in vec2 dpdy ) {
+    const float N = 10.0;
+    vec2 w = max(abs(dpdx), abs(dpdy));
+    vec2 a = p + 0.5*w;                        
+    vec2 b = p - 0.5*w;           
+    vec2 i = (floor(a)+min(fract(a)*N,1.0)-
+              floor(b)-min(fract(b)*N,1.0))/(N*w);
+    return (1.0-i.x)*(1.0-i.y);
+
+}
+
+
+Hit intersectScene(Ray ray, int iteration) {
+    vec3 skycolor = sky_color(ray.dir);
     Hit nearestHit = create_hit_sky(skycolor);
+
+    // ground
+    if (ray.dir != 0) {
+        float t = -ray.origin.y / ray.dir.y;
+        if (t > 0 && t < nearestHit.t) {
+            const float grid_size = 8;
+            const float grid_size2 = 8*8;
+            vec3 intersection = ray.origin + ray.dir * t;
+            float dist = distance(intersection, camera.pos);
+            float falloff = 100/max(dist,100);
+            
+            vec2 grid_8     = abs(mod(intersection.xz+grid_size/2.0f, vec2(grid_size)) -  grid_size/2.0f);
+            vec2 grid_64    = abs(mod(intersection.xz+grid_size2/2.0f, vec2(grid_size2)) -  grid_size2/2.0f);
+            if( min(grid_64.x, grid_64.y) < 0.2f) 
+				nearestHit = create_hit_GUI( falloff * vec3(1,1,1), t);
+            else if( min(grid_8.x, grid_8.y) < 0.1f ) 
+				nearestHit = create_hit_GUI( falloff * vec3(0.5f), t);
+        }
+    }
 
     //AABB
     vec3 scale = vec3(1.0f);
@@ -175,34 +229,82 @@ Hit intersectWorld(Ray ray, int iteration) {
 
 
 
-
-
-vec3 getRayColor(Ray ray) {
-    vec3 ray_color = vec3(1, 1, 1);
-
-    const int maxIterations = 2+camera.nbrBounces;
-    int iteration = 0;
-    while (iteration < maxIterations) {
+// t = amount of dir that light is away. important for shadow testing point and spotlights 
+vec3 light_sample(vec3 pos_it, out vec3 dir, out float t) {
+    int lightCount = nbrOfLights; 
+    if (background_useAsLight != 0) lightCount++;
+    if (lightCount == 0)            return vec3(0, 0, 0);
         
-        Hit hit = intersectWorld(ray, iteration);
-
-        Ray newRay;
-        vec3 attenuation;
-        bool scattered = material_scatter(hit, ray, attenuation, newRay);
-        ray = newRay;
-        ray_color *= attenuation;
-
-        if (!scattered)
-            return ray_color;
-        
-        iteration++;
+    int selectedLight = int(rand() * float(lightCount));
+    if (selectedLight >= nbrOfLights) {
+        dir = randomSpherePoint();
+        t = FLOAT_MAX;
+        return sky_color(dir) * background_intensity * lightCount;
     }
-    return vec3(0, 0, 0);
+
+    int type = lights[selectedLight].type;
+
+    switch (type) {
+    case LIGHT_TYPE_DIRECTION: {
+        dir = (lights[selectedLight].transformation * vec4(0, 1, 0, 0)).xyz;
+        t = FLOAT_MAX;
+        return lights[selectedLight].color * lightCount; 
+    }
+
+    case LIGHT_TYPE_POINT: {
+        vec3 light_pos = (lights[selectedLight].transformation * vec4(0, 0, 0, 1)).xyz;
+        dir = normalize(light_pos - pos_it);
+        float distSquared = distanceSquared(light_pos, pos_it);
+        t = sqrt(distSquared);
+        return lights[selectedLight].color * lightCount / distSquared;
+    }
+
+    case LIGHT_TYPE_SPOTLIGHT: {
+        vec3 light_pos = (lights[selectedLight].transformation * vec4(0, 0, 0, 1)).xyz;
+        dir = normalize(light_pos - pos_it);
+        float distSquared = distanceSquared(light_pos, pos_it);
+        t = sqrt(distSquared);
+        mat4 worldToLight = inverse(lights[selectedLight].transformation);
+        vec3 lightdir_local = normalize((worldToLight * vec4(dir, 0)).xyz);
+        float cosTheta = lightdir_local.y;
+        float falloff;
+        if (cosTheta < lights[selectedLight].falloff_inCosRadians)
+            falloff = 0;
+        else
+            falloff = 1;
+        return falloff * lights[selectedLight].color * lightCount / distSquared;
+    }
+    }
+    
+    // error
+    return vec3(0, 1, 0);
+    
 }
 
 
 
+vec3 getRayColor(Ray ray) {
+	Hit hit = intersectScene(ray, 0);
+    if (hit.material_type == MATERIAL_TYPE_SKY || hit.material_type == MATERIAL_TYPE_GUI)
+        return hit.material_albedo;
 
+    float t_light;
+    vec3 dir_light;
+    vec3 L = light_sample(hit.pos+hit.normal*0.0001, dir_light, t_light);
+
+    vec3 material = material_f(hit, -ray.dir, dir_light);
+
+    // shadow test
+    if (L != vec3(0,0,0) && material != 0) {
+        Ray ray_light = Ray(hit.pos, dir_light);
+        Hit hit2 = intersectScene(ray_light, 1);
+        if (t_light > hit2.t )
+            L = vec3(0,0,0);
+    }
+
+    return material * L * hit.material_albedo;
+        
+}
 
 
 void main() {
@@ -210,11 +312,11 @@ void main() {
 
     vec3 finalColor;
 
-    for (int i = 0; i < camera.nbrSamplesPerIteration; i++) {
-        Ray ray         = camera_createRayAt(camera, pos_Pixel);
+    for (int i = 0; i < nbrSamplesPerIteration; i++) {
+        Ray ray = camera_createRayAt(camera, pos_Pixel);
         finalColor += getRayColor(ray);
     }
-    finalColor /= float(camera.nbrSamplesPerIteration);
+    finalColor /= float(nbrSamplesPerIteration);
 
 
     vec3 old    = texture(textureTarget, vec2(1,-1)*(pos_Pixel.xy)/2+0.5).rgb;

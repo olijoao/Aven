@@ -1,6 +1,6 @@
 #version 460 core
 
-#pragma include "shader/brickPool/BrickPool.glsl"
+#include "shader/brickPool/BrickPool.glsl"
 
 uniform unsigned int capacity;
 

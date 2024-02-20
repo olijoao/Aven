@@ -1,7 +1,7 @@
 #ifndef FILTER_MAIN_GLSL
 #define FILTER_MAIN_GLSL
 
-#pragma include "shader/lib/volume.glsl"
+#include "shader/lib/volume.glsl"
 
 
 //forward declaration

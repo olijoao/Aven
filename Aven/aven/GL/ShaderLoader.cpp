@@ -11,7 +11,7 @@ namespace gl {
 	namespace {
 		// parses #include "filename"
 		std::string load_and_preprocess(std::string path, std::unordered_set<std::string>& alreadyIncludedPaths) {
-			std::regex const rgx(R"(#pragma[\s\t]+include[\s\t]+\"((?:.)*)\")");
+			std::regex const rgx(R"(#[\s\t]*include[\s\t]*\"((?:.)*)\")");
 
 			alreadyIncludedPaths.insert(path);
 
@@ -36,16 +36,12 @@ namespace gl {
 							throw;
 						}
 					}
-				}
-				else {
+				}else {
 					shadersource += line + "\n";
 				}
 			}
 	
-				
-
 			return shadersource;
-
 
 		}
 	}

@@ -25,6 +25,7 @@ namespace aven {
 		enum class Operation { None, Filter, ValueEdit, Tool, RotateCamera};
 
 		Operation	getCurrentOperation();
+		void		commit();
 		void		commitOperation();
 		void		cancelOperation();
 		void		startOperation(Filter* filter);

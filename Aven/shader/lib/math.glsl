@@ -10,8 +10,12 @@
 #define INV_PI		0.31830988618
 #define HALF_INV_PI	0.15915494309
 
-
 #define FLOAT_MAX	3.402823466e+38
 
+
+float distanceSquared(vec3 A, vec3 B) {
+    vec3 C = A - B;
+    return dot( C, C );
+}
 
 #endif	//MATH_GLSL

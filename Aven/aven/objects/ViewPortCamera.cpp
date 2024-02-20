@@ -61,7 +61,7 @@ namespace aven {
 		auto up			= normalize(cross(right, forward));
 
 		// center of imagePlane is 1 unit away from camera.pos
-		auto tan_HalfFovInRadians	= std::tan(radians(fov_degrees.getValue()) * 0.5f);
+		auto tan_HalfFovInRadians	= std::tan(toRadians(fov_degrees.getValue()) * 0.5f);
 		auto imagePlane_halfWidth	= tan_HalfFovInRadians * aspectRatio;
 		auto imagePlane_halfHeight	= tan_HalfFovInRadians;
 

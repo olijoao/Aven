@@ -6,9 +6,9 @@ namespace aven {
 
 	Project::Project(c_ivec3<1, Volume::MAX_VOLUME_LENGTH> const size)
 		:history(Scene(size)),
-		camera(vec3(0, 0, std::max(size.getValue().x, std::max(size.getValue().y,size.getValue().z)/2 + 100)), vec3(0, 0, 0), 90.0f)
+		camera(vec3(0, size.getValue().y/2, std::max(size.getValue().x, std::max(size.getValue().y,size.getValue().z)/2 + 100)), vec3(0, size.getValue().y/2, 0), 90.0f)
 	{
-		//...
+
 	}
 
 	Project::Project(ViewPortCamera&& camera, Scene&& scene) 
@@ -93,6 +93,12 @@ namespace aven {
 			commitOperation();
 			return;
 		}
+	}
+
+
+	void Project::commit() {
+		assert(operation == Operation::None);
+		history.commit();
 	}
 
 
@@ -181,8 +187,7 @@ namespace aven {
 		auto sptr_volume = getScene().volume;
 		getScene().volume = std::make_shared<Volume>(
 			sptr_volume->getVolumeData().getSize(),
-			sptr_volume->pos,
-			sptr_volume->sigma_t,
+			sptr_volume->transformation,
 			sptr_volume->density,
 			sptr_volume->stepSize,
 			sptr_volume->isRendering_BondingBox,

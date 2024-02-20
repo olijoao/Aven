@@ -39,12 +39,13 @@ namespace aven{
 		void displayPopup_NewProject();
 
 		void displayDevWindow();
+	
 
+		// windows
+		bool window_dev_isOpen = false;
 
 		//
-		bool	wasFilterPopupOpenLastFrame = false;
-		// enum class SceneViewer_state {Default, RotatingCamera, Tool};
-		// SceneViewer_state sceneViewerState = SceneViewer_state::Default;
+		bool wasFilterPopupOpenLastFrame = false;
 		bool request_modalWindow_newProject = false;	
 
 			
@@ -114,39 +115,40 @@ namespace aven{
 
 		//set style
 		ImGuiStyle& style = ImGui::GetStyle();
-		style.Colors[ImGuiCol_Text]					= (ImVec4)ImColor::ImColor(230, 230, 230);
+		style.Colors[ImGuiCol_ButtonHovered]		= (ImVec4)ImColor::ImColor(70, 70, 70);
+		style.Colors[ImGuiCol_Button]				= (ImVec4)ImColor::ImColor(50, 50, 50);
 		style.Colors[ImGuiCol_CheckMark]			= (ImVec4)ImColor::ImColor(0, 255, 0);
-		style.Colors[ImGuiCol_FrameBg]				= (ImVec4)ImColor::ImColor(50, 50, 50);
 		style.Colors[ImGuiCol_FrameBgHovered]		= (ImVec4)ImColor::ImColor(100, 100, 100);
-		style.Colors[ImGuiCol_TitleBgActive]		= (ImVec4)ImColor::ImColor(0, 0, 0);
-		style.Colors[ImGuiCol_TabActive]			= (ImVec4)ImColor::ImColor(70, 70, 70);
-		style.Colors[ImGuiCol_Button]				= (ImVec4)ImColor::ImColor(128, 128, 128);
-		style.Colors[ImGuiCol_ButtonHovered]		= (ImVec4)ImColor::ImColor(168, 168, 168);
-		style.Colors[ImGuiCol_Separator]			= (ImVec4)ImColor::ImColor(0, 0, 0);
-		style.Colors[ImGuiCol_SeparatorHovered]		= (ImVec4)ImColor::ImColor(135, 135, 135);
-		style.Colors[ImGuiCol_SeparatorActive]		= (ImVec4)ImColor::ImColor(185, 185, 185);
-		style.Colors[ImGuiCol_SliderGrab]			= (ImVec4)ImColor::ImColor(255, 255, 255);
+		style.Colors[ImGuiCol_FrameBg]				= (ImVec4)ImColor::ImColor(50, 50, 50);
+		style.Colors[ImGuiCol_HeaderActive]			= (ImVec4)ImColor::ImColor(70, 70, 70);
+		style.Colors[ImGuiCol_HeaderHovered]		= (ImVec4)ImColor::ImColor(50, 50, 50);
+		style.Colors[ImGuiCol_Header]				= (ImVec4)ImColor::ImColor(64, 64, 64);
 		style.Colors[ImGuiCol_ModalWindowDimBg]		= (ImVec4)ImColor::ImColor(0, 0, 0, 0);
-		style.Colors[ImGuiCol_WindowBg]				= (ImVec4)ImColor::ImColor(28, 28, 28);
-		style.Colors[ImGuiCol_TabUnfocusedActive]	= style.Colors[ImGuiCol_WindowBg];
+		style.Colors[ImGuiCol_SeparatorActive]		= (ImVec4)ImColor::ImColor(185, 185, 185);
+		style.Colors[ImGuiCol_SeparatorHovered]		= (ImVec4)ImColor::ImColor(135, 135, 135);
+		style.Colors[ImGuiCol_Separator]			= (ImVec4)ImColor::ImColor(0, 0, 0);
 		style.Colors[ImGuiCol_Separator]			= (ImVec4)ImColor::ImColor(128, 128, 128);
-		style.Colors[ImGuiCol_TitleBg]				= (ImVec4)ImColor::ImColor(17, 17, 17);
+		style.Colors[ImGuiCol_SliderGrab]			= (ImVec4)ImColor::ImColor(255, 255, 255);
+		style.Colors[ImGuiCol_TabActive]			= (ImVec4)ImColor::ImColor(70, 70, 70);
+		style.Colors[ImGuiCol_TabUnfocusedActive]	= (ImVec4)ImColor::ImColor(28, 28, 28);
+		style.Colors[ImGuiCol_Text]					= (ImVec4)ImColor::ImColor(230, 230, 230);
+		style.Colors[ImGuiCol_TitleBgActive]		= (ImVec4)ImColor::ImColor(0, 0, 0);
 		style.Colors[ImGuiCol_TitleBgActive]		= (ImVec4)ImColor::ImColor(17, 17, 17);
 		style.Colors[ImGuiCol_TitleBgCollapsed]		= (ImVec4)ImColor::ImColor(17, 17, 17);
-		style.Colors[ImGuiCol_Header]				= (ImVec4)ImColor::ImColor(90, 90, 90);
-		style.Colors[ImGuiCol_HeaderHovered]		= (ImVec4)ImColor::ImColor(50, 50, 50);
-		style.Colors[ImGuiCol_HeaderActive]			= (ImVec4)ImColor::ImColor(70, 70, 70);
-		style.WindowRounding						= 0;
+		style.Colors[ImGuiCol_TitleBg]				= (ImVec4)ImColor::ImColor(17, 17, 17);
+		style.Colors[ImGuiCol_WindowBg]				= (ImVec4)ImColor::ImColor(28, 28, 28);
+		style.FrameRounding							= 4;
+		style.GrabMinSize							= 4;
+		style.IndentSpacing							= 12;
+		style.ItemInnerSpacing.x					= 4;
+		style.ItemSpacing.y							= 2;
+		style.PopupRounding							= 4;
 		style.ScrollbarRounding						= 0;
 		style.TabRounding							= 3;
-		style.WindowPadding							= ImVec2(5, 5);
-		style.ItemSpacing.y							= 2;
-		style.ItemInnerSpacing.x					= 4;
 		style.WindowMenuButtonPosition				= ImGuiDir_None;
+		style.WindowPadding							= ImVec2(5, 5);
+		style.WindowRounding						= 0;
 		style.WindowRounding						= 4;
-		style.FrameRounding							= 4;
-		style.PopupRounding							= 4;
-		style.GrabMinSize							= 4;
 		style.WindowTitleAlign						= ImVec2(.5f, .5f);
 
 		//keyStrokes
@@ -180,6 +182,8 @@ namespace aven{
 			// Starting drawing while the inputfield is still active leads to:
 			// if(IsItemDeactivatedAfterEdit) commitHistory();  being called after aven::startOperation(Tool)
 			displayCanvas();
+
+			//ImGui::ShowDemoWindow();
 		}
 		catch (std::exception const& se) {
 			std::cout << std::endl;
@@ -232,6 +236,13 @@ namespace aven{
 			ImGui::EndMenu();
 		}
 
+		// Menu View
+		if (ImGui::BeginMenu("View")) {
+			if (ImGui::MenuItem("Dev Window", "", window_dev_isOpen)) {
+				window_dev_isOpen = !window_dev_isOpen;
+			}
+			ImGui::EndMenu();
+		}
 		ImGui::EndMainMenuBar();
 	}
 
@@ -353,10 +364,19 @@ namespace aven{
 			return;
 		}
 
+		if (ImGui::Button("+light")) {
+			auto& project = aven::getProject();
+			project.getScene().cloneLights();
+			project.getScene().push_light(Light());
+			project.commit();
+			project.renderer.resetIterations();
+		}
+
+		ImGui::Separator();
+
 		//RenderSettings
-		if (ImGui::CollapsingHeader("RenderSettings", ImGuiTreeNodeFlags_DefaultOpen)) {
+		if (ImGui::TreeNodeEx("RenderSettings", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed)) {
 			ImGui::Columns(2, nullptr, false);
-			
 
 			{
 				ImGui::Text("gamma");
@@ -477,13 +497,51 @@ namespace aven{
 				ImGui::NextColumn();
 			}
 
+			{
+				ImGui::Text("light from background");
+				ImGui::NextColumn();
 
+				auto& renderSettings = aven::getProject().getScene().renderSettings;
+				bool light = renderSettings->useBackgroundAsLight;
+				
+				ImGui::SetNextItemWidth(-1);
+				if (ImGui::Checkbox("##light from background", &light)) {
+					RenderSettings rs = *renderSettings;
+					rs.useBackgroundAsLight = light;
+					aven::getProject().getScene().renderSettings = std::make_shared<RenderSettings>(rs);
+					aven::getProject().renderer.resetIterations();
+				}
+				if (ImGui::IsItemDeactivatedAfterEdit())
+					aven::getProject().history.commit();
+				ImGui::NextColumn();
+			}
+
+			{
+				ImGui::Text("background intenstiy");
+				ImGui::NextColumn();
+
+				auto& renderSettings = aven::getProject().getScene().renderSettings;
+				float intensity = renderSettings->backgroundIntensity;
+				
+				ImGui::SetNextItemWidth(-1);
+				if (ImGui::DragFloat("##background multi", &intensity)) {
+					RenderSettings rs = *renderSettings;
+					rs.backgroundIntensity = intensity;
+					aven::getProject().getScene().renderSettings = std::make_shared<RenderSettings>(rs);
+					aven::getProject().renderer.resetIterations();
+				}
+				if (ImGui::IsItemDeactivatedAfterEdit())
+					aven::getProject().history.commit();
+				ImGui::NextColumn();
+			}
+
+			ImGui::TreePop();
 			ImGui::Columns(1);
 		}
 
 
 		//Scene
-		if (ImGui::CollapsingHeader("Volume", ImGuiTreeNodeFlags_DefaultOpen)){
+		if (ImGui::TreeNodeEx("Volume", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed)) {
 			ImGui::Columns(2, nullptr, false);
 
 			{
@@ -491,12 +549,12 @@ namespace aven{
 				ImGui::NextColumn();
 
 				auto& scene = aven::getProject().getScene();
-				auto pos = scene.volume->pos;
+				auto pos = scene.volume->transformation.getPos();
 				
 				ImGui::SetNextItemWidth(-1);
 				if (ImGui::DragFloat3("##pos", &pos[0])) {
 					Volume newVolume = *scene.volume.get();
-					newVolume.pos = pos;
+					newVolume.transformation.setPos(pos);
 					scene.volume = std::make_shared<Volume>(newVolume);
 					aven::getProject().renderer.resetIterations();
 				}
@@ -522,24 +580,7 @@ namespace aven{
 					aven::getProject().history.commit();
 				ImGui::NextColumn();
 			}	
-			
-			{
-				ImGui::Text("sigma_t");
-				ImGui::NextColumn();
-				auto& scene = aven::getProject().getScene();	//previous commitHistory will change scene
-				auto sigma_t = scene.volume->sigma_t.getValue();
-				ImGui::SetNextItemWidth(-1);
-				if (ImGui::DragFloat("##sigma_a", &sigma_t, 1, scene.volume->sigma_t.getMin(), scene.volume->sigma_t.getMax())) {
-					Volume newVolume = *scene.volume.get();
-					newVolume.sigma_t = sigma_t;
-					scene.volume = std::make_shared<Volume>(newVolume);
-					aven::getProject().renderer.resetIterations();
-				}
-				if (ImGui::IsItemDeactivatedAfterEdit())
-					aven::getProject().history.commit();
-				ImGui::NextColumn();
-			}
-
+		
 			{
 				ImGui::Text("density");
 				ImGui::NextColumn();
@@ -588,7 +629,174 @@ namespace aven{
 				ImGui::NextColumn();
 			}
 			ImGui::Columns(1);
+			ImGui::TreePop();
 		}
+
+		if (ImGui::TreeNodeEx("Lights", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed)) {
+			int index_lightToRemove = -1;
+			int i = 0;
+			while (i < aven::getProject().getScene().getLights().size()) {
+
+
+				auto flags	= ImGuiTreeNodeFlags_DefaultOpen 
+							| ImGuiTreeNodeFlags_Framed 
+							| ImGuiTreeNodeFlags_AllowOverlap 
+							| ImGuiTreeNodeFlags_ClipLabelForTrailingButton;
+				std::string label = "Light " + std::to_string(i);
+				if (ImGui::TreeNodeEx(label.c_str(), flags)) {
+
+					// button to remove light
+					// semi-copied from imgui_widget::CollapsingHeader
+					{
+						ImGuiWindow* window = ImGui::GetCurrentWindow();
+						ImGuiID id = window->GetID(label.c_str());
+						ImGuiContext& g = *GImGui;
+						ImGuiLastItemData last_item_backup = g.LastItemData;
+						float button_size = g.FontSize;
+						float button_x = ImMax(g.LastItemData.Rect.Min.x, g.LastItemData.Rect.Max.x - g.Style.FramePadding.x - button_size);
+						float button_y = g.LastItemData.Rect.Min.y + g.Style.FramePadding.y;
+						ImGuiID close_button_id = ImGui::GetIDWithSeed("#CLOSE", NULL, id);
+						if (ImGui::CloseButton(close_button_id, ImVec2(button_x, button_y)))
+							index_lightToRemove = i;
+						g.LastItemData = last_item_backup;
+					}
+
+
+					ImGui::Columns(2, nullptr, false);
+
+					//light type
+					{
+						ImGui::Text("type");
+						ImGui::NextColumn();
+
+						auto& scene = aven::getProject().getScene();
+
+						auto type = aven::getProject().getScene().getLights()[i]->type;
+						char const* items[] = { "Direction", "Point", "Spotlight" };
+						int type_i = static_cast<int>(type);
+						ImGui::SetNextItemWidth(-1);
+						if (ImGui::Combo("##Type", &type_i, items, IM_ARRAYSIZE(items))) {
+							Light light = *scene.getLights()[i];
+							light.type = static_cast<Light::Type>(type_i);
+							scene.replaceLight(i, light);
+							aven::getProject().history.commit();
+							aven::getProject().renderer.resetIterations();
+						}
+
+						ImGui::NextColumn();
+					}
+
+					auto lightType = aven::getProject().getScene().getLights()[i]->type;
+
+					if (lightType == Light::Type::Point || lightType == Light::Type::SpotLight) {
+						ImGui::Text("pos");
+						ImGui::NextColumn();
+
+						auto& scene = aven::getProject().getScene();
+						vec3 pos = (vec3) scene.getLights()[i]->transformation.getPos();
+
+						ImGui::SetNextItemWidth(-1);
+						if (ImGui::DragFloat3(("##pos"+std::to_string(i)).c_str(), &pos[0])) {
+							Light light = *scene.getLights()[i];
+							light.transformation.setPos(pos);
+							scene.replaceLight(i, light);
+							aven::getProject().renderer.resetIterations();
+						}
+						if (ImGui::IsItemDeactivatedAfterEdit())
+							aven::getProject().history.commit();
+						ImGui::NextColumn();
+					}
+
+					if (lightType == Light::Type::Direction || lightType == Light::Type::SpotLight) {
+						ImGui::Text("rotation");
+						ImGui::NextColumn();
+
+						auto& scene = aven::getProject().getScene();
+						vec3 rotation = (vec3) scene.getLights()[i]->transformation.getRotation();
+
+						ImGui::SetNextItemWidth(-1);
+						if (ImGui::DragFloat3(("##rotation"+std::to_string(i)).c_str(), &rotation[0])) {
+							Light light = *scene.getLights()[i];
+							light.transformation.setRotation((Vector3<degrees>) rotation);
+							scene.replaceLight(i, light);
+							aven::getProject().renderer.resetIterations();
+						}
+						if (ImGui::IsItemDeactivatedAfterEdit())
+							aven::getProject().history.commit();
+						ImGui::NextColumn();
+					}
+
+					if (lightType == Light::Type::SpotLight) {
+						ImGui::Text("falloff angle");
+						ImGui::NextColumn();
+
+						auto& scene = aven::getProject().getScene();
+						float falloff_angle = scene.getLights()[i]->falloff_angle_degrees;
+
+						ImGui::SetNextItemWidth(-1);
+						if (ImGui::DragFloat(("##falloff angle"+std::to_string(i)).c_str(), &falloff_angle)) {
+							Light light = *scene.getLights()[i];
+							light.falloff_angle_degrees = falloff_angle;
+							scene.replaceLight(i, light);
+							aven::getProject().renderer.resetIterations();
+						}
+						if (ImGui::IsItemDeactivatedAfterEdit())
+							aven::getProject().history.commit();
+						ImGui::NextColumn();
+					}
+
+					{
+						ImGui::Text("color");
+						ImGui::NextColumn();
+
+						auto& scene = aven::getProject().getScene();
+						auto col = scene.getLights()[i]->color.getValue();
+						ImGui::SetNextItemWidth(-1);
+						if (ImGui::ColorEdit3(("##color"+std::to_string(i)).c_str(), &col[0])) {
+							Light light = *scene.getLights()[i];
+							light.color = col;
+							scene.replaceLight(i, light);
+							aven::getProject().renderer.resetIterations();
+						}
+						if (ImGui::IsItemDeactivatedAfterEdit())
+							aven::getProject().history.commit();
+						ImGui::NextColumn();
+					}
+
+					{
+						ImGui::Text("intensity");
+						ImGui::NextColumn();
+
+						auto& scene = aven::getProject().getScene();
+						auto inten = scene.getLights()[i]->intensity.getValue();
+
+						ImGui::SetNextItemWidth(-1);
+						if (ImGui::DragFloat(("##intensity"+std::to_string(i)).c_str(), &inten)) {
+							Light light = *scene.getLights()[i];
+							light.intensity = inten;
+							scene.replaceLight(i, light);
+							aven::getProject().renderer.resetIterations();
+						}
+						if (ImGui::IsItemDeactivatedAfterEdit())
+							aven::getProject().history.commit();
+						ImGui::NextColumn();
+					}
+
+					ImGui::Columns(1);
+					ImGui::TreePop();
+				}
+				i++;
+			}
+			ImGui::TreePop();
+			if (index_lightToRemove != -1) {
+				aven::getProject().getScene().cloneLights();
+				aven::getProject().getScene().removeLight(index_lightToRemove);
+				aven::getProject().history.commit();
+				aven::getProject().renderer.resetIterations();
+			
+			}
+		}
+
 		ImGui::End();
 	}
 
@@ -736,8 +944,13 @@ namespace aven{
 
 
 	void gui::displayDevWindow() {
-		bool open = true;
-		ImGui::Begin("DevWindow", &open);
+		if (!window_dev_isOpen)
+			return;
+
+		if (!ImGui::Begin("DevWindow", &window_dev_isOpen)) {
+			ImGui::End();
+			return;
+		}
 
 		static FpsCounter fpsConunter;
 		auto passedTime = fpsConunter.tick();

@@ -7,7 +7,7 @@
 
 
 namespace aven {
-
+	
 	inline bool display_imgui(std::string const& displayName, vec3& value) {
 		return ImGui::DragFloat3(displayName.c_str(), &value[0]);
 	}	
@@ -27,9 +27,6 @@ namespace aven {
 	inline bool display_imgui(std::string const& displayName, bool& value) {
 		return ImGui::Checkbox(displayName.c_str(), &value);
 	}
-
-
-
 
 	inline void display_imgui(std::string const& label, bvec3& value) {
 		ImGui::Checkbox( ("##"+label+"_x").c_str(), &value.x);
@@ -75,7 +72,6 @@ namespace aven {
 		}
 		return false;
 	}
-
 
 }
 

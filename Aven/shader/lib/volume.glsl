@@ -1,7 +1,7 @@
 #ifndef VOLUME_GLSL
 #define VOLUME_GLSL
 
-#pragma include "shader/brickPool/BrickPool.glsl"
+#include "shader/brickPool/BrickPool.glsl"
 
 
 layout(std430, binding = 1) coherent buffer Volume_1 {

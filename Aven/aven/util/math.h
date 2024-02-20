@@ -7,6 +7,28 @@
 #include <array>
 #include <assert.h>
 #include <algorithm>
+#include <cmath>
+
+// forward declaratoin
+float toRadians(float degrees);
+
+
+struct radians {
+	float value;
+
+	radians(float value) :value(value) {/*...*/ }
+	operator float() const { return value; }
+};
+
+
+struct degrees{
+	float value;
+
+	degrees(float value=0) :value(value) {/*...*/ }
+	operator float() const { return value; }
+	operator radians() const { return toRadians(value); }
+};
+
 
 template<typename T> class		Vector2;
 template<typename T> class		Vector3;
@@ -50,11 +72,11 @@ inline T mod(T a, T b) {
 	return a - b * floor(a / b);
 }
 
-inline float radians(float d) {
+inline float toRadians(float d) {
 	return d * std::numbers::pi_v<float> / 180;
 }
 
-inline double radians(double d) {
+inline double toRadians(double d) {
 	return d * std::numbers::pi / 180;
 }
 
@@ -537,9 +559,9 @@ Matrix4x4<T> transpose(Matrix4x4<T> const& input) {
 
 inline mat4 mat4_translate(float x, float y, float z) {
 	return mat4(1, 0, 0, x,
-		0, 1, 0, y,
-		0, 0, 1, z,
-		0, 0, 0, 1);
+				0, 1, 0, y,
+				0, 0, 1, z,
+				0, 0, 0, 1);
 }
 
 
@@ -550,9 +572,39 @@ inline mat4 mat4_translate(vec3 const& offset) {
 
 inline mat4 mat4_scale(vec3 const& scale) {
 	return mat4(scale.x, 0, 0, 0,
-		0, scale.y, 0, 0,
-		0, 0, scale.z, 0,
-		0, 0, 0, 1);
+				0, scale.y, 0, 0,
+				0, 0, scale.z, 0,
+				0, 0, 0, 1);
+}
+
+inline mat4 mat4_rotateX(radians angle) {
+		return mat4(1, 0, 0, 0,
+					0, std::cos(angle), -std::sin(angle), 0,
+					0, std::sin(angle), std::cos(angle), 0,
+					0, 0, 0, 1);
+}
+
+inline mat4 mat4_rotateY(radians angle) {
+		return mat4(std::cos(angle), 0, std::sin(angle), 0,
+					0, 1, 0, 0,
+					-std::sin(angle), 0, std::cos(angle), 0,
+					0, 0, 0, 1);
+}
+
+inline mat4 mat4_rotateZ(radians angle) {
+		return mat4(std::cos(angle), -std::sin(angle), 0, 0,
+					std::sin(angle), std::cos(angle), 0, 0,
+					0, 0, 1, 0,
+					0, 0, 0, 1);
+}
+
+inline mat4 mat4_rotateXYZ(Vector3<radians> angles) {
+	return mat4_rotateZ(angles.z) * mat4_rotateY(angles.y) * mat4_rotateX(angles.x);
+}
+
+
+inline mat4 mat4_rotateXYZ(Vector3<degrees> angles) {
+	return mat4_rotateXYZ(Vector3<radians>(angles.x, angles.y, angles.z));
 }
 
 
@@ -563,9 +615,9 @@ inline mat4 mat4_rotate_axis(vec3 const& a, float theta) {
 	float oneMinusCosT = 1.0f - cosT;
 
 	return mat4(cosT + a.x * a.x * oneMinusCosT, a.x * a.y * oneMinusCosT - a.z * sinT, a.x * a.z * oneMinusCosT + a.y * sinT, 0,
-		a.y * a.x * oneMinusCosT + a.z * sinT, cosT + a.y * a.y * oneMinusCosT, a.y * a.z * oneMinusCosT - a.x * sinT, 0,
-		a.z * a.x * oneMinusCosT - a.y * sinT, a.z * a.y * oneMinusCosT + a.x * sinT, cosT + a.z * a.z * oneMinusCosT, 0,
-		0, 0, 0, 1);
+				a.y * a.x * oneMinusCosT + a.z * sinT, cosT + a.y * a.y * oneMinusCosT, a.y * a.z * oneMinusCosT - a.x * sinT, 0,
+				a.z * a.x * oneMinusCosT - a.y * sinT, a.z * a.y * oneMinusCosT + a.x * sinT, cosT + a.z * a.z * oneMinusCosT, 0,
+				0, 0, 0, 1);
 }
 
 
@@ -575,9 +627,9 @@ inline mat4 mat4_lookAt(vec3 const& pos, vec3 const& target, vec3 const& up) {
 	vec3 newUp = cross(right, dir);
 
 	return mat4(right.x, right.y, right.z, -dot(pos, right),
-		newUp.x, newUp.y, newUp.z, -dot(pos, newUp),
-		dir.x, dir.y, dir.z, -dot(pos, dir),
-		0, 0, 0, 1);
+				newUp.x, newUp.y, newUp.z, -dot(pos, newUp),
+				dir.x, dir.y, dir.z, -dot(pos, dir),
+				0, 0, 0, 1);
 
 }
 
@@ -587,9 +639,9 @@ inline mat4 mat4_lookAt_inv(vec3 const& pos, vec3 const& target, vec3 const& up)
 	vec3 newUp = cross(right, dir);
 
 	return mat4(right.x, newUp.x, dir.x, pos.x,
-		right.y, newUp.y, dir.y, pos.y,
-		right.z, newUp.z, dir.z, pos.z,
-		0, 0, 0, 1);
+				right.y, newUp.y, dir.y, pos.y,
+				right.z, newUp.z, dir.z, pos.z,
+				0, 0, 0, 1);
 }
 
 
@@ -600,7 +652,11 @@ inline mat4 mat4_perspective(float fovRadians, float aspect, float near, float f
 
 	float scale = 1.0f / std::tan(0.5f * fovRadians);
 	return mat4(scale / aspect, 0, 0, 0,
-		0, scale, 0, 0,
-		0, 0, far / (far - near), -far * near / (far - near),
-		0, 0, 1, 1);
+				0, scale, 0, 0,
+				0, 0, far / (far - near), -far * near / (far - near),
+				0, 0, 1, 1);
  }
+
+
+
+

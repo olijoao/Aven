@@ -2,7 +2,7 @@
 Aven is an application able to render and modify volumes.
 <br>
 <br>
-<img src="images/Screenshot.png" alt="screenshot of app"> 
+<img src="images/Screenshot.jpg" alt="screenshot of app"> 
 
 <h2>Features</h2>
  <ul>

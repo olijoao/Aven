@@ -1,12 +1,12 @@
 #pragma once
 
-#include <aven/util/clamped.h>
 #include <aven/objects/VolumeData.h>
+#include <aven/util/Transformation.h>
+#include <aven/util/clamped.h>
 #include <aven/util/geo3d.h>
 #include <aven/util/math.h>
 #include <expected>
 #include <fstream>
-
 
 
 namespace aven {
@@ -17,8 +17,7 @@ namespace aven {
 
 	public:
 		Volume(	c_ivec3<1, MAX_VOLUME_LENGTH> size, 
-				vec3 pos,
-				c_float<0.001f, 100000.0f>	sigma_t,
+				Transformation transformation,
 				c_float<0.001f, 100000.0f>	density,
 				c_float<0.25f,	5.0f>		stepSize,
 				bool isRenderingBoundingBox,
@@ -49,9 +48,8 @@ namespace aven {
 
 
 	public:
-		vec3 pos;
+		Transformation transformation;
 		c_float<0.25f,	5.0f>		stepSize;
-		c_float<0.001f,	100000.0f>	sigma_t;	
 		c_float<0.001f,	100000.0f>	density;	
 		bool isRendering_BondingBox = true;
 		bool renderingMode_Hybrid	= false;

@@ -1,7 +1,7 @@
 #version 460 core
 
 #define FILTER_COLOR
-#pragma include "shader/lib/filter_main.glsl"
+#include "shader/lib/filter_main.glsl"
 
 uniform float contrast;
 uniform float brightness;

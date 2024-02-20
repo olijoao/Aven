@@ -12,7 +12,11 @@ namespace aven {
 		out.write((char*) &rs.nbrBounces,				sizeof(rs.nbrBounces));
 		out.write((char*) &rs.backgroundColor_sky,		sizeof(rs.backgroundColor_sky));
 		out.write((char*) &rs.backgroundColor_ground,	sizeof(rs.backgroundColor_ground));
+		out.write((char*) &rs.useBackgroundAsLight,		sizeof(rs.useBackgroundAsLight));
+		out.write((char*) &rs.backgroundIntensity,		sizeof(rs.backgroundIntensity));
 	}
+
+
 
 
 	std::expected<RenderSettings, std::string> RenderSettings::deserialize(std::ifstream& in) {
@@ -22,26 +26,32 @@ namespace aven {
 		if (version != 1)
 			return std::unexpected("Could not deserialiize RenderSettings: version has to be 1");
 
-		float gamma;
+		float gamma, backgroundIntensity;
 		int maxSamples, nbrSamplesPerIteration, nbrBounces;
 		vec3 bg_sky, bg_ground;
+		bool useBackgroundAsLight;	
+
 
 		if (   !in.read((char*)&gamma, sizeof(gamma))
 			|| !in.read((char*)&maxSamples, sizeof(maxSamples))
 			|| !in.read((char*)&nbrSamplesPerIteration, sizeof(nbrSamplesPerIteration))
 			|| !in.read((char*)&nbrBounces, sizeof(nbrBounces))
 			|| !in.read((char*)&bg_sky, sizeof(bg_sky))
-			|| !in.read((char*)&bg_ground, sizeof(bg_ground))) 
+			|| !in.read((char*)&bg_ground, sizeof(bg_ground)) 
+			|| !in.read((char*)&useBackgroundAsLight, sizeof(useBackgroundAsLight)) 
+			|| !in.read((char*)&backgroundIntensity, sizeof(backgroundIntensity))) 
 		{
 			return std::unexpected("error occured while deserializing RenderSettings.");
 		}
 
-		return RenderSettings{	.gamma = gamma,
-								.maxSamples = maxSamples,
+		return RenderSettings{	.gamma					= gamma,
+								.maxSamples				= maxSamples,
 								.nbrSamplesPerIteration = nbrSamplesPerIteration,
-								.nbrBounces	= nbrBounces,
-								.backgroundColor_sky = bg_sky,
-								.backgroundColor_ground = bg_ground};
+								.nbrBounces				= nbrBounces,
+								.backgroundColor_sky	= bg_sky,
+								.backgroundColor_ground = bg_ground,
+								.useBackgroundAsLight	= useBackgroundAsLight,
+								.backgroundIntensity	= backgroundIntensity};
 	}
 
 

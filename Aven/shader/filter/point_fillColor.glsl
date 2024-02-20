@@ -1,6 +1,6 @@
 #version 460 core
 #define FILTER_COLOR_ALPHA
-#pragma include "shader/lib/filter_main.glsl"
+#include "shader/lib/filter_main.glsl"
 
 uniform vec3	color;
 uniform bool	mask;

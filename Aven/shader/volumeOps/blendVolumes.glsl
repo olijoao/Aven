@@ -1,8 +1,8 @@
 
 #version 460 core
 
-#pragma include "shader/lib/blend.glsl"
-#pragma include "shader/lib/volume.glsl"
+#include "shader/lib/blend.glsl"
+#include "shader/lib/volume.glsl"
 
 #define BLEND_MODE_NORMAL	1
 #define BLEND_MODE_ERASE	2

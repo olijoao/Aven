@@ -39,8 +39,7 @@ namespace aven {
 
 		scene.volume = std::make_shared<Volume>(
 			volume->getVolumeData().getSize(),
-			volume->pos,
-			volume->sigma_t,
+			volume->transformation,
 			volume->density,
 			volume->stepSize,
 			volume->isRendering_BondingBox,

@@ -8,17 +8,15 @@
 namespace aven {
 
 	Volume::Volume(	c_ivec3<1, MAX_VOLUME_LENGTH>size, 
-					vec3 pos,
-					c_float<0.001f, 100000.0f>	sigma_t,
+					Transformation transformation,
 					c_float<0.001f, 100000.0f>	density,
 					c_float<0.25f, 5.0f>		stepSize,
 					bool isRenderingBoundingBox,
 					bool renderingMode_Hybrid, 
 					std::shared_ptr<VolumeData> volumeData):
-		sigma_t(sigma_t),
 		density(density),
 		stepSize(stepSize),
-		pos(pos),
+		transformation(transformation),
 		isRendering_BondingBox(isRenderingBoundingBox),
 		renderingMode_Hybrid(renderingMode_Hybrid)
 	{
@@ -33,11 +31,11 @@ namespace aven {
 		int version = 1;
 		out.write((char*) &version,	sizeof(version));
 	
+		Transformation::serialize(out, volume.transformation);
+
 		auto size = volume.getSize();
 		out.write((char *) &size, sizeof(size));
-		out.write((char *) &volume.pos, sizeof(volume.pos));
 		out.write((char *) &volume.stepSize, sizeof(volume.stepSize));
-		out.write((char *) &volume.sigma_t, sizeof(volume.sigma_t));
 		out.write((char *) &volume.density, sizeof(volume.density)); 
 		out.put(volume.isRendering_BondingBox ? 1 : 0);
 		out.put(volume.renderingMode_Hybrid ? 1 : 0);
@@ -74,20 +72,23 @@ namespace aven {
 
 		int version;
 		ivec3 size;
-		vec3 pos;
-		float stepSize, sigma_t, density;
+		float stepSize, density;
 		bool isRendering_BoundingBox, isRenderingMode_Hybrid;  
 
-		if (   !in.read((char*)&version, sizeof(version))
-			|| !in.read((char*)&size, sizeof(size))
-			|| !in.read((char*)&pos, sizeof(pos))
+		if ( !in.read((char*)&version, sizeof(version)))
+			return std::unexpected("Error occured while deserializing Volume.");
+
+		auto transformation = Transformation::deserialize(in);
+		if(!transformation.has_value())
+			return std::unexpected("Error occured while deserializing Volume." + transformation.error());
+
+		if(    !in.read((char*)&size, sizeof(size))
 			|| !in.read((char*)&stepSize, sizeof(stepSize))
-			|| !in.read((char*)&sigma_t, sizeof(sigma_t))
 			|| !in.read((char*)&density, sizeof(density)) 
 			|| !in.read((char*)&isRendering_BoundingBox, sizeof(isRendering_BoundingBox))
 			|| !in.read((char*)&isRenderingMode_Hybrid, sizeof(isRenderingMode_Hybrid)))
 		{
-			return std::unexpected("error occured while deserializing Volume.");
+			return std::unexpected("Error occured while deserializing Volume.");
 		}
 
 		if (any(greaterThan(size, ivec3(Volume::MAX_VOLUME_LENGTH)))) 
@@ -131,7 +132,7 @@ namespace aven {
 
 		VolumeData volumeData(size);
 		volumeData.getSSBO().setData(&data_volumeBricks[0], nbrBricks * 4);
-		auto volume = Volume(size, pos, sigma_t, density, stepSize, isRendering_BoundingBox, isRenderingMode_Hybrid, std::make_shared<VolumeData>(std::move(volumeData))); 
+		auto volume = Volume(size, transformation.value(), density, stepSize, isRendering_BoundingBox, isRenderingMode_Hybrid, std::make_shared<VolumeData>(std::move(volumeData)));
 		return volume;
 	}
 
@@ -166,7 +167,7 @@ namespace aven {
 
 	AABB<float> Volume::getBoundingBox() const {
 		vec3 halfSize = vec3(getSize()) / 2;
-		return { pos-halfSize, {pos+halfSize}};
+		return { transformation.getPos() - halfSize, {transformation.getPos() + halfSize}};
 	}
 
 
@@ -175,7 +176,7 @@ namespace aven {
 		if (!intersection)
 			return {};
 
-		vec3 intersection_pos = ray.pos + ray.dir * intersection.value().x - this->pos;
+		vec3 intersection_pos = ray.pos + ray.dir * intersection.value().x - this->transformation.getPos();
 		intersection_pos = intersection_pos + vec3(this->getSize()) / 2;
 		Ray rayInternal = Ray(intersection_pos, ray.dir);
 		return volumeOps::raycast(this->getVolumeData(), rayInternal);

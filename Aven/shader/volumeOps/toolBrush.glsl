@@ -1,7 +1,7 @@
 
 #version 460 core
-#pragma include "shader/lib/blend.glsl"
-#pragma include "shader/lib/volume.glsl"
+#include "shader/lib/blend.glsl"
+#include "shader/lib/volume.glsl"
 
 uniform layout(rgba8, binding = 1) image3D volume;
 

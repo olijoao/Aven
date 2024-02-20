@@ -2,7 +2,7 @@
 #ifndef SAMPLE_GLSL
 #define SAMPLE_GLSL
 
-#pragma include "shader/lib/math.glsl"
+#include "shader/lib/math.glsl"
 
 // rand
 float rand_internal;

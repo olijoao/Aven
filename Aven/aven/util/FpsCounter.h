@@ -25,6 +25,6 @@ public:
 
 
 private:
-	std::list<int> lastIntervals;
+	std::list<long long> lastIntervals;
 	__int64 lastTime{ std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() };
 };

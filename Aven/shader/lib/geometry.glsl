@@ -24,10 +24,10 @@ struct Sphere {
 bool intersect(Ray r, Sphere s) {
     vec3 c_r = r.origin - s.center;
     float b = 2.0 * dot(r.dir, c_r);
-    float delta = b * b - 4.0 * (dot(c_r, c_r) - (s.radius * s.radius));
-    return (delta >= 0.0)
-        && (0.5 * (-b - sqrt(delta))) > 0;
+    float delta = b * b - 4.0 * (dot(c_r, c_r) - (s.radius * s.radius));  
+    return (delta >= 0.0) && (0.5 * (-b - sqrt(delta))) > 0;
 }
+
 
 // Intersection (Ray - Sphere)
 // Paramaters
