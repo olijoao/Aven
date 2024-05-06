@@ -1,7 +1,7 @@
 #pragma once
-#include <aven/util/math.h>
-#include <aven/util/geo3d.h>
-#include <aven/util/clamped.h>
+#include <acore/clamped.h>
+#include <acore/geo3d.h>
+#include <acore/math.h>
 #include <expected>
 #include <fstream>
 

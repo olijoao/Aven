@@ -1,5 +1,5 @@
 
-#include <aven/GL/ShaderLoader.h>
+#include <acore/GL/ShaderLoader.h>
 #include <aven/volumeOperations/Filter.h>
 #include <aven/objects/BrickPool.h>
 

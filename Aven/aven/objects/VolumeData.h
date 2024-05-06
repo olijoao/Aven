@@ -1,7 +1,7 @@
 #pragma once
 
-#include <aven/GL/SSBO.h>
-#include <aven/util/math.h>
+#include <acore/GL/SSBO.h>
+#include <acore/math.h>
 #include <memory> 
 
 

@@ -1,9 +1,8 @@
 
+#include <acore/ImageIO.h>
 #include <aven/aven.h>
 #include <aven/gui/ImGui_ToolProperties.h>
-#include <aven/util/ImageIO.h>
 #include <aven/volumeOperations/Tool_Brush.h>
-
 
 namespace aven {
 
@@ -30,7 +29,7 @@ namespace aven {
 	}
 
 
-	void Tool_Brush::end(Scene& scene, MouseInput const&, std::unique_ptr<OperationTool> op) {
+	void Tool_Brush::end(Scene& scene, vec2 const& mousePos_01 , std::unique_ptr<OperationTool> op) {
 		auto& volume = scene.volume;
 		auto result = volumeOps::blend(volume->getVolumeData(),
 			std::move(op->volumeData),
@@ -50,15 +49,17 @@ namespace aven {
 
 
 
-	void Tool_Brush::apply(Scene& scene, MouseInput const& mouseInput) {
+	void Tool_Brush::apply(Scene& scene, vec2 const& mousePos_01) {
 		assert(aven::getProject().currentToolOperation != nullptr);
-		
+
+
 		auto& op = aven::getProject().currentToolOperation;
 		assert(op && op->tool == this);
 		
 		auto& volume = scene.volume;
 		
-		std::optional<ivec3> optional_pos = volume->intersect(mouseInput.ray);
+		auto ray = aven::getProject().camera.createRay(mousePos_01);
+		std::optional<ivec3> optional_pos = volume->intersect(ray);
 		if (!optional_pos.has_value())
 			return;
 		auto pos = optional_pos.value();

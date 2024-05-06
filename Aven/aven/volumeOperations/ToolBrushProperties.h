@@ -1,7 +1,7 @@
 #pragma once
 
 #include <aven/volumeOperations/Brush.h>
-#include <aven/util/clamped.h>
+#include <acore/clamped.h>
 
 namespace aven {
 	struct ToolBrushProperties {

@@ -1,9 +1,8 @@
 #pragma once
 
-#include <aven/GL/Texture.h>
-#include <aven/gui/MouseInput.h>
+#include <acore/GL/Texture.h>
+#include <acore/geo3d.h>
 #include <aven/objects/Scene.h>
-#include <aven/util/geo3d.h>
 #include <aven/volumeOperations/OperationTool.h>
 #include <aven/volumeOperations/ToolBrushProperties.h>
 #include <aven/volumeOperations/VolumeOps.h>
@@ -19,8 +18,8 @@ namespace aven {
 		Tool_Brush(std::string name, volumeOps::BlendMode blendmode, std::string const& path_icon ="");
 
 		std::unique_ptr<OperationTool>	start(Scene&);
-		void							end(Scene&,	MouseInput const&, std::unique_ptr<OperationTool>);
-		void							apply(Scene&,	MouseInput const&);
+		void							end(Scene&,	vec2 const& mousePos_01, std::unique_ptr<OperationTool>);
+		void							apply(Scene&, vec2 const& mousePosition_01);
 
 		void displayImGui();
 

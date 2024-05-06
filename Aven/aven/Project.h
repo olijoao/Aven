@@ -3,7 +3,7 @@
 #include <aven/objects/Scene.h>
 #include <aven/objects/ViewPortCamera.h>
 #include <aven/render/Renderer.h>
-#include <aven/util/History.h>
+#include <acore/History.h>
 #include <aven/volumeOperations/Filter.h>
 #include <aven/volumeOperations/OperationTool.h>
 #include <expected>
@@ -32,9 +32,9 @@ namespace aven {
 		void		executeFilterOperation();
 		Filter*		getFilterOperation();			//returns nullptr if getCurrentOperation() != Filter
 
-		void		startOperation(Tool_Brush* tool, MouseInput const&);
-		void		continueToolOperation(MouseInput const&);
-		void		endToolOperation(MouseInput const&);
+		void		startOperation(Tool_Brush* tool, vec2 const& mousePos_01);
+		void		continueToolOperation(vec2 const& mousePos_01);
+		void		endToolOperation(vec2 const& mousePos_01);
 		
 		std::unique_ptr<OperationTool> currentToolOperation { nullptr };
 

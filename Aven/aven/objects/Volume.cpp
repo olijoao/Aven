@@ -1,7 +1,7 @@
 
+#include <acore/geo3d.h>
 #include <aven/objects/BrickPool.h>
 #include <aven/objects/Volume.h>
-#include <aven/util/geo3d.h>
 #include <aven/volumeOperations/VolumeOps.h>
 #include <vector>
 

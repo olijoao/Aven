@@ -1,7 +1,7 @@
 #pragma once
 
 #include <3rdParty/GL/glad.h>
-#include <aven/util/math.h>
+#include <acore/math.h>
 #include <vector>
 
 namespace aven {

@@ -1,7 +1,7 @@
 #pragma once
 
+#include <acore/clamped.h>
 #include <aven/objects/VolumeData.h>
-#include <aven/util/clamped.h>
 #include <aven/volumeOperations/Tool_Brush.h>
 #include <aven/volumeOperations/VolumeOps.h>
 #include <optional>

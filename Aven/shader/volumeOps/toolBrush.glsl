@@ -3,8 +3,6 @@
 #include "shader/lib/blend.glsl"
 #include "shader/lib/volume.glsl"
 
-uniform layout(rgba8, binding = 1) image3D volume;
-
 uniform ivec3	aabb_intersection_min;
 uniform ivec3	aabb_intersection_max;
 uniform vec4	color;

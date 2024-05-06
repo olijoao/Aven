@@ -1,5 +1,5 @@
 
-#include <aven/GL/Texture.h>
+#include <acore/GL/Texture.h>
 #include <stdexcept>
 
 namespace aven {

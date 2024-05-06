@@ -1,6 +1,6 @@
 
 #include <assert.h>
-#include <aven/GL/VAO.h>
+#include <acore/GL/VAO.h>
 
 
 namespace aven {

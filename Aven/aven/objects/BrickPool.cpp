@@ -1,7 +1,7 @@
 
+#include <acore/GL/SSBO.h>
+#include <acore/GL/ShaderLoader.h>
 #include <assert.h>
-#include <aven/GL/SSBO.h>
-#include <aven/GL/ShaderLoader.h>
 #include <aven/objects/BrickPool.h>
 #include <memory>
 #include <stdexcept>

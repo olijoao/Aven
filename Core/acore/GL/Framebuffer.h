@@ -1,9 +1,9 @@
 #pragma once
 
-#include <assert.h>
 #include <3rdParty/GL/glad.h>
-#include <aven/GL/Texture.h>
-
+#include <acore/GL/Texture.h>
+#include <acore/math.h>
+#include <assert.h>
 
 namespace aven {
 namespace gl {

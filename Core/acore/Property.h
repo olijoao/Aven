@@ -1,7 +1,7 @@
 #pragma once
 
-#include <aven/GL/Program.h>
-#include <aven/gui/ImGui_Util.h>
+#include <acore/GL/Program.h>
+#include <acore/gui/ImGui_Util.h>
 #include <memory>
 #include <string>
 

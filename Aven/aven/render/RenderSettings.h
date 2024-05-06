@@ -1,6 +1,6 @@
 #pragma once
 
-#include <aven/util/clamped.h>
+#include <acore/clamped.h>
 #include <expected>
 #include <fstream>
 

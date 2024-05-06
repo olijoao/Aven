@@ -1,7 +1,8 @@
 #pragma once
 
-#include <aven/GL/Shader.h>
-#include <aven/util/clamped.h>
+#include <acore/GL/Shader.h>
+#include <acore/clamped.h>
+#include <acore/math.h>
 #include <memory>
 #include <unordered_map>
 #include <vector>

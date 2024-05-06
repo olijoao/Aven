@@ -1,6 +1,6 @@
 
 #include <assert.h>
-#include <aven/GL/SSBO.h>
+#include <acore/GL/SSBO.h>
 #include <utility>
 
 

@@ -6,9 +6,9 @@
 #include <3rdParty/imgui/imgui_impl_glfw.h>
 #include <3rdParty/imgui/imgui_impl_opengl3.h>
 #include <3rdParty/imgui/imgui_internal.h>
+#include <acore/gui/KeyBindings.h>
 #include <aven/Aven.h>
 #include <aven/gui/GUI.h>
-#include <aven/gui/KeyBindings.h>
 #include <aven/objects/BrickPool.h>
 #include <aven/util/FpsCounter.h>
 #include <aven/volumeOperations/FilterManager.h>
@@ -295,8 +295,8 @@ namespace aven{
 
 			if (ImGui::IsMouseClicked(0)) {
 				auto* tool = aven::toolManager::getSelectedTool();
-				if (tool) 
-					aven::getProject().startOperation(tool, {posMouse_relative_inViewer, aven::getProject().camera.createRay(posMouse_relative_inViewer)});
+				if (tool)
+					aven::getProject().startOperation(tool, posMouse_relative_inViewer);
 			}
 		}
 
@@ -315,7 +315,7 @@ namespace aven{
 		else if (project.operation == Project::Operation::Tool && ImGui::IsMouseDragging(0)) {
 			auto dragDelta = ImGui::GetMouseDragDelta(0);
 			if ((abs(dragDelta.x) > 0 || abs(dragDelta.y) > 0)) {
-				aven::getProject().continueToolOperation({ posMouse_relative_inViewer, aven::getProject().camera.createRay(posMouse_relative_inViewer) });
+				aven::getProject().continueToolOperation(posMouse_relative_inViewer);
 				ImGui::ResetMouseDragDelta(0);
 			}
 				
@@ -328,7 +328,7 @@ namespace aven{
 
 		//release: tool
 		else if(project.operation == Project::Operation::Tool && ImGui::IsMouseReleased(0)) {
-			aven::getProject().endToolOperation({ posMouse_relative_inViewer, aven::getProject().camera.createRay(posMouse_relative_inViewer) });
+			aven::getProject().endToolOperation(posMouse_relative_inViewer);
 		}
 		
 

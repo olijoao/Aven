@@ -1,10 +1,11 @@
 #pragma once
 
-#include <aven/GL/SSBO.h>
+#include <acore/GL/SSBO.h>
+#include <acore/geo3d.h>
 #include <aven/objects/VolumeData.h>
-#include <aven/util/geo3d.h>
 #include <aven/volumeOperations/Brush.h>
 #include <aven/volumeOperations/ToolBrushProperties.h>
+#include <acore/math.h>
 
 namespace aven {
 	namespace volumeOps {

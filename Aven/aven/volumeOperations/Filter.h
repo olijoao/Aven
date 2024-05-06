@@ -1,8 +1,8 @@
 #pragma once
 
-#include <aven/GL/Program.h>
+#include <acore/GL/Program.h>
+#include <acore/Property.h>
 #include <aven/objects/VolumeData.h>
-#include <aven/util/Property.h>
 #include <string>
 
 

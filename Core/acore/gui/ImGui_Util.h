@@ -1,8 +1,8 @@
 #pragma once
 
 #include <3rdParty/imgui/imgui.h>
-#include <aven/util/clamped.h>
-#include <aven/util/math.h>
+#include <acore/clamped.h>
+#include <acore/math.h>
 #include <string>
 
 

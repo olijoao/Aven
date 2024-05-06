@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -18,13 +18,67 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="3rdParty\GL\glad.c" />
+    <ClCompile Include="3rdParty\imgui\imgui.cpp" />
+    <ClCompile Include="3rdParty\imgui\imgui_demo.cpp" />
+    <ClCompile Include="3rdParty\imgui\imgui_draw.cpp" />
+    <ClCompile Include="3rdParty\imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="3rdParty\imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="3rdParty\imgui\imgui_tables.cpp" />
+    <ClCompile Include="3rdParty\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="acore\GL\FrameBuffer.cpp" />
+    <ClCompile Include="acore\GL\Program.cpp" />
+    <ClCompile Include="acore\GL\Shader.cpp" />
+    <ClCompile Include="acore\GL\ShaderLoader.cpp" />
+    <ClCompile Include="acore\GL\SSBO.cpp" />
+    <ClCompile Include="acore\GL\Texture.cpp" />
+    <ClCompile Include="acore\GL\VAO.cpp" />
+    <ClCompile Include="acore\gui\KeyBindings.cpp" />
+    <ClCompile Include="acore\ImageIO.cpp" />
+    <ClCompile Include="acore\Transformation.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="3rdParty\GL\glad.h" />
+    <ClInclude Include="3rdParty\GL\glfw3.h" />
+    <ClInclude Include="3rdParty\GL\glfw3native.h" />
+    <ClInclude Include="3rdParty\GL\khrplatform.h" />
+    <ClInclude Include="3rdParty\imgui\imconfig.h" />
+    <ClInclude Include="3rdParty\imgui\imgui.h" />
+    <ClInclude Include="3rdParty\imgui\imgui_impl_glfw.h" />
+    <ClInclude Include="3rdParty\imgui\imgui_impl_opengl3.h" />
+    <ClInclude Include="3rdParty\imgui\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="3rdParty\imgui\imgui_internal.h" />
+    <ClInclude Include="3rdParty\imgui\imstb_rectpack.h" />
+    <ClInclude Include="3rdParty\imgui\imstb_textedit.h" />
+    <ClInclude Include="3rdParty\imgui\imstb_truetype.h" />
+    <ClInclude Include="3rdParty\stb\stb_image.h" />
+    <ClInclude Include="acore\geo3d.h" />
+    <ClInclude Include="acore\GL\Framebuffer.h" />
+    <ClInclude Include="acore\GL\Program.h" />
+    <ClInclude Include="acore\GL\Shader.h" />
+    <ClInclude Include="acore\GL\ShaderLoader.h" />
+    <ClInclude Include="acore\GL\SSBO.h" />
+    <ClInclude Include="acore\GL\Texture.h" />
+    <ClInclude Include="acore\GL\VAO.h" />
+    <ClInclude Include="acore\gui\ImGui_Util.h" />
+    <ClInclude Include="acore\gui\KeyBindings.h" />
+    <ClInclude Include="acore\History.h" />
+    <ClInclude Include="acore\ImageIO.h" />
+    <ClInclude Include="acore\math.h" />
+    <ClInclude Include="acore\clamped.h" />
+    <ClInclude Include="acore\Property.h" />
+    <ClInclude Include="acore\Transformation.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="3rdParty\libs\glfw3.lib" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
-    <VCProjectVersion>16.0</VCProjectVersion>
+    <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{1c30555f-a26d-46a7-9ae0-464fe902a864}</ProjectGuid>
-    <RootNamespace>Aven</RootNamespace>
+    <ProjectGuid>{c5a13791-406a-491f-a0ae-10a0f945b608}</ProjectGuid>
+    <RootNamespace>Core</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>Aven</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -41,13 +95,13 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -71,17 +125,11 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(SolutionDir)Aven;$(SolutionDir)Core;</IncludePath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(SolutionDir)Aven;$(SolutionDir)Core;</IncludePath>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)Aven;$(SolutionDir)Core</IncludePath>
+    <IncludePath>C:\Users\olijo\Documents\Aven\Core;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)Aven;$(SolutionDir)Core</IncludePath>
+    <IncludePath>C:\Users\olijo\Documents\Aven\Core;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -89,12 +137,10 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -105,14 +151,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -126,7 +170,6 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SolutionDir)$(PlatForm)\$(Configuration)\Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -144,95 +187,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SolutionDir)$(PlatForm)\$(Configuration)\Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="aven\Aven.cpp" />
-    <ClCompile Include="aven\objects\Light.cpp" />
-    <ClCompile Include="aven\Project.cpp" />
-    <ClCompile Include="aven\render\Renderer.cpp" />
-    <ClCompile Include="aven\objects\ViewPortCamera.cpp" />
-    <ClCompile Include="aven\objects\BrickPool.cpp" />
-    <ClCompile Include="aven\objects\VolumeData.cpp" />
-    <ClCompile Include="aven\objects\Scene.cpp" />
-    <ClCompile Include="aven\objects\Volume.cpp" />
-    <ClCompile Include="aven\render\RenderSettings.cpp" />
-    <ClCompile Include="aven\volumeOperations\OperationTool.cpp" />
-    <ClCompile Include="aven\volumeOperations\Tool_Brush.cpp" />
-    <ClCompile Include="aven\volumeOperations\VolumeOps.cpp" />
-    <ClCompile Include="aven\volumeOperations\Filter.cpp" />
-    <ClCompile Include="aven\volumeOperations\FilterManager.cpp" />
-    <ClCompile Include="aven\volumeOperations\ToolManager.cpp" />
-    <ClCompile Include="aven\volumeOperations\VolumeOps.h" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="aven\gui\Gui.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="aven\Aven.h" />
-    <ClInclude Include="aven\objects\BrickPool.h" />
-    <ClInclude Include="aven\objects\Light.h" />
-    <ClInclude Include="aven\objects\VolumeData.h" />
-    <ClInclude Include="aven\render\RenderSettings.h" />
-    <ClInclude Include="aven\Project.h" />
-    <ClInclude Include="aven\util\FpsCounter.h" />
-    <ClInclude Include="aven\gui\ImGui_ToolProperties.h" />
-    <ClInclude Include="aven\objects\ViewPortCamera.h" />
-    <ClInclude Include="aven\gui\Gui.h" />
-    <ClInclude Include="aven\render\Renderer.h" />
-    <ClInclude Include="aven\objects\Scene.h" />
-    <ClInclude Include="aven\objects\Volume.h" />
-    <ClInclude Include="aven\volumeOperations\ToolBrushProperties.h" />
-    <ClInclude Include="aven\volumeOperations\OperationTool.h" />
-    <ClInclude Include="aven\_experimental\BlockAllocator.h" />
-    <ClInclude Include="aven\_experimental\NodePool.h" />
-    <ClInclude Include="aven\volumeOperations\Brush.h" />
-    <ClInclude Include="aven\volumeOperations\Filter.h" />
-    <ClInclude Include="aven\volumeOperations\FilterManager.h" />
-    <ClInclude Include="aven\volumeOperations\Tool_Brush.h" />
-    <ClInclude Include="aven\volumeOperations\ToolManager.h" />
-    <ClInclude Include="shader\filter\adjustRGB.glsl" />
-    <ClInclude Include="shader\lib\filter_main.glsl" />
-    <ClInclude Include="shader\_experimental\NodePool.glsl" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="shader\brickPool\BrickPool.glsl" />
-    <None Include="shader\brickPool\BrickPool_ctor.glsl" />
-    <None Include="shader\brickPool\BrickPool_transphere.glsl" />
-    <None Include="shader\brickPool\Volume_dtor.glsl" />
-    <None Include="shader\filter\brightness_contrast.glsl" />
-    <None Include="shader\filter\clear.glsl" />
-    <None Include="shader\filter\adjustHSV.glsl" />
-    <None Include="shader\filter\point_invertRGB.glsl" />
-    <None Include="shader\filter\point_fillColor.glsl" />
-    <None Include="shader\filter\renderRandom.glsl" />
-    <None Include="shader\filter\transform.glsl" />
-    <None Include="shader\lib\blend.glsl" />
-    <None Include="shader\lib\camera.glsl" />
-    <None Include="shader\lib\geometry.glsl" />
-    <None Include="shader\lib\math.glsl" />
-    <None Include="shader\lib\sample.glsl" />
-    <None Include="shader\lib\shade.glsl" />
-    <None Include="shader\lib\volume.glsl" />
-    <None Include="shader\_experimental\NodePool_ctor.glsl" />
-    <None Include="shader\_experimental\NodePool_transphere.glsl" />
-    <None Include="shader\render\tonemap_frag.glsl" />
-    <None Include="shader\render\tonemap_vert.glsl" />
-    <None Include="shader\volumeOps\blendVolumes.glsl" />
-    <None Include="shader\volumeOps\toolBrush.glsl" />
-    <None Include="shader\volumeOps\raycast.glsl" />
-    <None Include="shader\___todoOld\filter\TestFilter.glsl" />
-    <None Include="shader\___todoOld\gui\SingleColor.glsl" />
-    <None Include="shader\___todoOld\lib\Filter.glsl" />
-    <None Include="shader\___todoOld\lib\Layer.glsl" />
-    <None Include="shader\___todoOld\LayerRenderer.glsl" />
-    <None Include="shader\___todoOld\tools\Paint.glsl" />
-    <None Include="shader\___todoOld\_experimental\Layer_dtor.glsl" />
-    <None Include="shader\___todoOld\__temp\filter.glsl" />
-    <None Include="shader\render\renderer_frag.glsl" />
-    <None Include="shader\render\renderer_vert.glsl" />
-    <None Include="shader\___todoOld\__temp\renderShape.glsl" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

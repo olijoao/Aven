@@ -141,7 +141,7 @@ namespace aven {
 
 
 
-	void Project::startOperation(Tool_Brush* tool, MouseInput const& mouseInput) {
+	void Project::startOperation(Tool_Brush* tool, vec2 const& mousePos_01) {
 		assert(tool);
 		assert(operation == Operation::None);
 		assert(currentToolOperation == nullptr);
@@ -149,29 +149,29 @@ namespace aven {
 		operation = Operation::Tool;
 
 		currentToolOperation = std::move(tool->start(getScene()));
-		tool->apply(getScene(), mouseInput);
+		tool->apply(getScene(), mousePos_01);
 		renderer.resetIterations();
 	}
 
 
 
-	void Project::continueToolOperation(MouseInput const& mouseInput) {
+	void Project::continueToolOperation(vec2 const& mousePos_01) {
 		assert(operation == Operation::Tool);
 		assert(currentToolOperation);
 
 		if (currentToolOperation) {
-			currentToolOperation->tool->apply(getScene(), mouseInput);
+			currentToolOperation->tool->apply(getScene(), mousePos_01);
 			renderer.resetIterations();
 		}
 	}
 
 
-	void Project::endToolOperation(MouseInput const& mouseInput) {
+	void Project::endToolOperation(vec2 const& mousePos_01) {
 		assert(operation == Operation::Tool);
 		assert(currentToolOperation);
 
 		if (currentToolOperation) {
-			currentToolOperation->tool->end(getScene(), mouseInput, std::move(currentToolOperation));
+			currentToolOperation->tool->end(getScene(), mousePos_01, std::move(currentToolOperation));
 			renderer.resetIterations();
 		}
 		commitOperation();

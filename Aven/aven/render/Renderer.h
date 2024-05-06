@@ -1,8 +1,8 @@
 #pragma once
 
-#include <aven/GL/Framebuffer.h>
-#include <aven/GL/ShaderLoader.h>
-#include <aven/GL/VAO.h>
+#include <acore/GL/Framebuffer.h>
+#include <acore/GL/ShaderLoader.h>
+#include <acore/GL/VAO.h>
 #include <random>
 
 namespace aven {
